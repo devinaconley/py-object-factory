@@ -2,9 +2,6 @@
 .idea/
 *.DS_Store
 *.pytest_cache/
-core/etc/data
-core/etc/results
-core/etc/secrets
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

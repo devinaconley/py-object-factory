@@ -3,7 +3,7 @@ module for testing functionality of serializable factory, objects and fields
 """
 
 # src
-from object_factory.serializable import Factory, Serializable, Field, Nested, List
+from objectfactory.serializable import Factory, Serializable, Field, Nested, List
 
 
 @Factory.register_class

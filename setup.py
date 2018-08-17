@@ -4,8 +4,8 @@ with open( 'README.md', 'r' ) as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name='object_factory',
-    version='0.0.0',
+    name='objectfactory',
+    version='0.0.1',
     author='Devin A. Conley',
     author_email='devinaconley@gmail.com',
     description='A python package for the serializable model / factory pattern',

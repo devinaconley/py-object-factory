@@ -1,5 +1,5 @@
 """
-object_factory
+objectfactory
 """
 
 from .serializable import (
@@ -9,3 +9,5 @@ from .serializable import (
     Nested,
     List
 )
+
+__version__ = '0.0.1'
