@@ -1,9 +1,10 @@
 """
 serializable module
 
-implements base abstract class, metaclass, factory, and fields
+implements base abstract class, metaclass, and base field class for serializable objects
 """
 
+# lib
 from copy import deepcopy
 
 
@@ -49,9 +50,10 @@ class Field( object ):
 
 class Meta( type ):
     """
-    metaclass to be used for defining serializable classes
+    metaclass for serializable classes
 
-    this
+    this is a metaclass to be used for collecting relevant field information when
+    defining a new serializable class
     """
 
     def __new__( mcs, name, bases, attributes ):
@@ -124,112 +126,3 @@ class Serializable( object, metaclass=Meta ):
             if attr._name not in body:
                 continue  # accept default
             attr.deserialize_field( self, body[attr._name] )
-
-
-class Factory( object ):
-    """
-    factory class for registering and creating serializable objects
-    """
-
-    registry = {}
-
-    @classmethod
-    def register_class( cls, serializable: Serializable ):
-        """
-        register class with factory
-
-        :param name:
-        :param serializable:
-        :return:
-        """
-        cls.registry[serializable.__name__] = serializable
-        return serializable
-
-    @classmethod
-    def create_object( cls, body: dict ) -> Serializable:
-        """
-        create object from JSON dictionary
-
-        :param body:
-        :return:
-        """
-        obj = cls.registry[body['_type']]()
-        obj.deserialize( body )
-        return obj
-
-
-class Nested( Field ):
-    """
-    field type for nested serializable object
-    """
-
-    def serialize_field( self, instance, deserializable=True ):
-        """
-        accessor to be called during serialization
-
-        serialize() is called recursively on the nested object
-
-        :param instance:
-        :param deserializable:
-        :return:
-        """
-        obj = getattr( instance, self._key, self._default )
-        if obj is None:
-            return None
-        return obj.serialize( deserializable=deserializable )
-
-    def deserialize_field( self, instance, value ):
-        """
-        setter to be called during deserialization
-
-        factory is used to create a nested object from json body
-
-        :param instance:
-        :param value:
-        :return:
-        """
-        if value is None:
-            return
-        obj = Factory.create_object( value )
-        setattr( instance, self._key, obj )
-
-
-class List( Field ):
-    """
-    field type for list of serializable objects
-    """
-
-    def __init__( self, default=None ):
-        if default is None:
-            default = []
-        super().__init__( default )
-
-    def serialize_field( self, instance, deserializable=True ):
-        """
-        accessor to be called during serialization
-
-        iterate across list and call serialize() recursively on each object
-
-        :param instance:
-        :param deserializable:
-        :return:
-        """
-        lst = []
-        for obj in getattr( instance, self._key, self._default ):
-            lst.append( obj.serialize( deserializable=deserializable ) )
-        return lst
-
-    def deserialize_field( self, instance, value ):
-        """
-        setter to be called during deserialization
-
-        factory is used to create each serialized json object in list
-
-        :param instance:
-        :param value:
-        :return:
-        """
-        lst = []
-        for body in value:
-            lst.append( Factory.create_object( body ) )
-        setattr( instance, self._key, lst )
