@@ -4,7 +4,7 @@ module for testing functionality of serializable factory
 
 # src
 from objectfactory import Factory
-from .test_serializable import MyBasicClass
+from .testmodule.testclasses import MyBasicClass
 
 
 class TestFactory( object ):

@@ -3,25 +3,7 @@ module for testing functionality of serializable objects
 """
 
 # src
-from objectfactory import Factory, Serializable, Field
-
-
-@Factory.register_class
-class MyBasicClass( Serializable ):
-    """
-    basic class to be used for testing serialization
-    """
-    str_prop = Field()
-    int_prop = Field()
-
-
-@Factory.register_class
-class MySubClass( MyBasicClass ):
-    """
-    sub class to be used for testing inheritance and serialization
-    """
-    int_prop = Field()
-    str_prop_sub = Field()
+from .testmodule.testclasses import MyBasicClass, MySubClass
 
 
 class TestSerializable( object ):
