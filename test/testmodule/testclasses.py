@@ -3,10 +3,10 @@ module to implement various dummy classes for use during testing
 """
 
 # src
-from objectfactory import Factory, Serializable, Field, Nested, List
+from objectfactory import register_class, Serializable, Field, Nested, List
 
 
-@Factory.register_class
+@register_class
 class MyBasicClass( Serializable ):
     """
     basic class to be used for testing serialization
@@ -15,7 +15,7 @@ class MyBasicClass( Serializable ):
     int_prop = Field()
 
 
-@Factory.register_class
+@register_class
 class MySubClass( MyBasicClass ):
     """
     sub class to be used for testing inheritance and serialization
@@ -24,7 +24,7 @@ class MySubClass( MyBasicClass ):
     str_prop_sub = Field()
 
 
-@Factory.register_class
+@register_class
 class MyBasicClassWithLists( Serializable ):
     """
     basic class to be used for testing serialization of primitive lists
@@ -33,7 +33,7 @@ class MyBasicClassWithLists( Serializable ):
     int_list_prop = Field()
 
 
-@Factory.register_class
+@register_class
 class MyComplexClass( Serializable ):
     """
     complex class to test hierarchical serialization
@@ -42,7 +42,7 @@ class MyComplexClass( Serializable ):
     prop = Field()
 
 
-@Factory.register_class
+@register_class
 class MyOtherComplexClass( Serializable ):
     """
     complex class to test list serialization
@@ -51,7 +51,7 @@ class MyOtherComplexClass( Serializable ):
     nested_list_prop = List()
 
 
-@Factory.register_class
+@register_class
 class MyClassWithFieldOptionals( Serializable ):
     """
     complex class to test list serialization

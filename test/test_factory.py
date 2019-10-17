@@ -6,7 +6,7 @@ module for testing functionality of serializable factory
 import pytest
 
 # src
-from objectfactory import Factory
+import objectfactory
 from .testmodule.testclasses import MyBasicClass
 
 
@@ -22,8 +22,8 @@ class TestFactory( object ):
         MyBasicClass should be registered
         :return:
         """
-        assert 'MyBasicClass' in Factory.registry
-        assert 'test.testmodule.testclasses.MyBasicClass' in Factory.registry
+        assert 'MyBasicClass' in objectfactory._Factory.registry
+        assert 'test.testmodule.testclasses.MyBasicClass' in objectfactory._Factory.registry
 
     def test_create_object( self ):
         """
@@ -37,7 +37,7 @@ class TestFactory( object ):
             'str_prop': 'somestring',
             'int_prop': 42,
         }
-        obj = Factory.create_object( body )
+        obj = objectfactory.create_object( body )
 
         assert isinstance( obj, MyBasicClass )
         assert obj.str_prop == 'somestring'
@@ -55,7 +55,7 @@ class TestFactory( object ):
             'str_prop': 'somestring',
             'int_prop': 42,
         }
-        obj = Factory.create_object( body )
+        obj = objectfactory.create_object( body )
 
         assert isinstance( obj, MyBasicClass )
         assert obj.str_prop == 'somestring'
@@ -73,7 +73,7 @@ class TestFactory( object ):
             'str_prop': 'somestring',
             'int_prop': 42,
         }
-        obj = Factory.create_object( body )
+        obj = objectfactory.create_object( body )
 
         assert isinstance( obj, MyBasicClass )
         assert obj.str_prop == 'somestring'
@@ -92,4 +92,4 @@ class TestFactory( object ):
             'int_prop': 42,
         }
         with pytest.raises( ValueError, match=r'.*type MyClassThatDoesNotExist not found.*' ):
-            obj = Factory.create_object( body )
+            _ = objectfactory.create_object( body )
