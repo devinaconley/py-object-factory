@@ -98,17 +98,21 @@ class Serializable( object, metaclass=Meta ):
             if key in self._fields:
                 self._fields[key].__set__( self, val )
 
-    def serialize( self, deserializable: bool = True ) -> dict:
+    def serialize( self, deserializable: bool = True, use_full_type: bool = True ) -> dict:
         """
         serialize model to JSON
 
-        :param deserializable:
+        :param deserializable: if true, type information will be included in body
+        :param use_full_type: if true, the fully qualified path with be specified in body
         :return:
         :rtype dict
         """
         body = {}
         if deserializable:
-            body['_type'] = self.__class__.__name__
+            if use_full_type:
+                body['_type'] = self.__class__.__module__ + '.' + self.__class__.__name__
+            else:
+                body['_type'] = self.__class__.__name__
 
         for _, attr in self._fields.items():
             body[attr._name] = attr.serialize_field( self, deserializable=deserializable )

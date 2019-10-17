@@ -24,6 +24,7 @@ class Factory( object ):
         :param serializable:
         :return:
         """
+        cls.registry[serializable.__module__ + '.' + serializable.__name__] = serializable
         cls.registry[serializable.__name__] = serializable
         return serializable
 
@@ -35,6 +36,16 @@ class Factory( object ):
         :param body:
         :return:
         """
-        obj = cls.registry[body['_type']]()
-        obj.deserialize( body )
-        return obj
+        try:
+            obj = cls.registry[body['_type']]()
+            obj.deserialize( body )
+            return obj
+        except KeyError:
+            pass
+        try:
+            obj = cls.registry[body['_type'].split( '.' )[-1]]()
+            obj.deserialize( body )
+            return obj
+        except KeyError:
+            pass
+        raise ValueError( 'Object type {} not found in factory registry'.format( body['_type'] ) )

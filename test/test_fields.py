@@ -33,9 +33,9 @@ class TestNested( object ):
 
         body = obj.serialize()
 
-        assert body['_type'] == 'MyComplexClass'
+        assert body['_type'] == 'test.testmodule.testclasses.MyComplexClass'
         assert body['prop'] == 'some property'
-        assert body['nested']['_type'] == 'MyBasicClass'
+        assert body['nested']['_type'] == 'test.testmodule.testclasses.MyBasicClass'
         assert body['nested']['str_prop'] == 'my subclass string'
         assert body['nested']['int_prop'] == 100
 
@@ -89,7 +89,7 @@ class TestPrimitiveList( object ):
         obj.int_list_prop.append( 5 )
         body = obj.serialize()
 
-        assert body['_type'] == 'MyBasicClassWithLists'
+        assert body['_type'] == 'test.testmodule.testclasses.MyBasicClassWithLists'
         assert body['str_list_prop'] == ['hello', 'world', '!']
         assert body['int_list_prop'] == [0, 1, 2, 3, 4, 5]
 
@@ -132,7 +132,7 @@ class TestPrimitiveList( object ):
         obj.str_list_prop.append( '!' )
         obj.int_list_prop.append( 5 )
 
-        assert body['_type'] == 'MyBasicClassWithLists'
+        assert body['_type'] == 'test.testmodule.testclasses.MyBasicClassWithLists'
         assert body['str_list_prop'] == ['hello', 'world']
         assert body['int_list_prop'] == [0, 1, 2, 3, 4]
 
@@ -191,11 +191,11 @@ class TestNestedList( object ):
 
         body = obj.serialize()
 
-        assert body['_type'] == 'MyOtherComplexClass'
+        assert body['_type'] == 'test.testmodule.testclasses.MyOtherComplexClass'
         assert body['str_prop'] == 'object name'
         assert len( body['nested_list_prop'] ) == 3
         for i, nested_body in enumerate( body['nested_list_prop'] ):
-            assert nested_body['_type'] == 'MyBasicClass'
+            assert nested_body['_type'] == 'test.testmodule.testclasses.MyBasicClass'
             assert nested_body['str_prop'] == nested_strings[i]
             assert nested_body['int_prop'] == nested_ints[i]
 
@@ -258,7 +258,7 @@ class TestFieldOptionals( object ):
 
         body = obj.serialize()
 
-        assert body['_type'] == 'MyClassWithFieldOptionals'
+        assert body['_type'] == 'test.testmodule.testclasses.MyClassWithFieldOptionals'
         assert body['str_prop'] == 'default_val'
         assert body['int_prop_named'] == 99
 

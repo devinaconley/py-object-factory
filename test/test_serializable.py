@@ -22,7 +22,7 @@ class TestSerializable( object ):
         obj.int_prop = 1234
         body = obj.serialize()
 
-        assert body['_type'] == 'MyBasicClass'
+        assert body['_type'] == 'test.testmodule.testclasses.MyBasicClass'
         assert body['str_prop'] == 'my awesome string'
         assert body['int_prop'] == 1234
 
@@ -92,6 +92,21 @@ class TestSerializable( object ):
         assert obj.str_prop == 'some string'
         assert obj.int_prop == 12
 
+    def test_serialize_short_type( self ):
+        """
+        test serialization without fully qualified path
+
+        :return:
+        """
+        obj = MyBasicClass()
+        obj.str_prop = 'my awesome string'
+        obj.int_prop = 1234
+        body = obj.serialize( use_full_type=False )
+
+        assert body['_type'] == 'MyBasicClass'
+        assert body['str_prop'] == 'my awesome string'
+        assert body['int_prop'] == 1234
+
 
 class TestSubClass( object ):
     """
@@ -114,7 +129,7 @@ class TestSubClass( object ):
 
         body = obj.serialize()
 
-        assert body['_type'] == 'MySubClass'
+        assert body['_type'] == 'test.testmodule.testclasses.MySubClass'
         assert body['str_prop'] == 'parent_class_string'
         assert body['int_prop'] == 99
         assert body['str_prop_sub'] == 'sub_class_string'
