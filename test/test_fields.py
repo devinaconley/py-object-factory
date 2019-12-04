@@ -2,6 +2,9 @@
 module for testing functionality of serializable fields
 """
 
+# lib
+import pytest
+
 # src
 from objectfactory import Factory, Serializable, Field, Nested, List
 from .test_serializable import MyBasicClass
@@ -21,7 +24,16 @@ class MyComplexClass( Serializable ):
     """
     complex class to test hierarchical serialization
     """
-    nested = Nested( MyBasicClass )
+    nested = Nested()
+    prop = Field()
+
+
+@Factory.register_class
+class MyTypedComplexClass( Serializable ):
+    """
+    complex class to test hierarchical serialization
+    """
+    nested = Nested( field_type=MyBasicClass )
     prop = Field()
 
 
@@ -32,6 +44,15 @@ class MyOtherComplexClass( Serializable ):
     """
     str_prop = Field()
     nested_list_prop = List()
+
+
+@Factory.register_class
+class MyOtherTypedComplexClass( Serializable ):
+    """
+    complex class to test list serialization
+    """
+    str_prop = Field()
+    nested_list_prop = List( field_type=MyBasicClass )
 
 
 @Factory.register_class
@@ -97,6 +118,56 @@ class TestNested( object ):
         assert isinstance( obj.nested, MyBasicClass )
         assert obj.nested.str_prop == 'random string'
         assert obj.nested.int_prop == 4321
+
+    def test_deserialize_typed( self ):
+        """
+        test deserialization without _type field
+
+        expect nested json to be deserialized into a MyBasicClass object that is
+        a member of MyTypedComplexClass, even without nested _type field
+
+        :return:
+        """
+        body = {
+            '_type': 'MyComplexClass',
+            'prop': 'really cool property',
+            'nested': {
+                'str_prop': 'random string',
+                'int_prop': 4321
+            }
+        }
+
+        obj = MyTypedComplexClass()
+        obj.deserialize( body )
+
+        assert isinstance( obj, MyTypedComplexClass )
+        assert obj.prop == 'really cool property'
+        assert isinstance( obj.nested, MyBasicClass )
+        assert obj.nested.str_prop == 'random string'
+        assert obj.nested.int_prop == 4321
+
+    def test_deserialize_enforce( self ):
+        """
+        test deserialization enforcing field type
+
+        expect an error to be thrown on deserialization because the nested
+        field is of the incorrect type
+
+        :return:
+        """
+        body = {
+            '_type': 'MyComplexClass',
+            'prop': 'really cool property',
+            'nested': {
+                '_type': 'MyBasicClassWithLists',
+                'str_prop': 'random string',
+                'int_prop': 4321
+            }
+        }
+
+        obj = MyTypedComplexClass()
+        with pytest.raises( ValueError ):
+            obj.deserialize( body )
 
 
 class TestPrimitiveList( object ):
@@ -260,6 +331,43 @@ class TestNestedList( object ):
         obj.deserialize( body )
 
         assert isinstance( obj, MyOtherComplexClass )
+        assert obj.str_prop == 'really great string property'
+        assert len( obj.nested_list_prop ) == 3
+        for i, nested_obj in enumerate( obj.nested_list_prop ):
+            assert isinstance( nested_obj, MyBasicClass )
+            assert nested_obj.str_prop == nested_strings[i]
+            assert nested_obj.int_prop == nested_ints[i]
+
+    def test_deserialize_typed( self ):
+        """
+        test deserialization without _type field
+
+        expect list of nested json objects to be deserialized into a list
+        of MyBasicClass objects that is a member of MyComplexClass, even without
+        _type field specified
+
+        :return:
+        """
+        body = {
+            '_type': 'MyOtherTypedComplexClass',
+            'str_prop': 'really great string property',
+            'nested_list_prop': []
+        }
+        nested_strings = ['some string', 'another string', 'one more string']
+        nested_ints = [101, 102, 103]
+
+        for s, n in zip( nested_strings, nested_ints ):
+            body['nested_list_prop'].append(
+                {
+                    'str_prop': s,
+                    'int_prop': n
+                }
+            )
+
+        obj = MyOtherTypedComplexClass()
+        obj.deserialize( body )
+
+        assert isinstance( obj, MyOtherTypedComplexClass )
         assert obj.str_prop == 'really great string property'
         assert len( obj.nested_list_prop ) == 3
         for i, nested_obj in enumerate( obj.nested_list_prop ):
