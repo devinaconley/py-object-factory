@@ -11,4 +11,4 @@ from .field import Nested, List
 register_class = _Factory.register_class
 create_object = _Factory.create_object
 
-__version__ = '0.0.2'
+__version__ = '0.0.3'

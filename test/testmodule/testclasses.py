@@ -58,3 +58,21 @@ class MyClassWithFieldOptionals( Serializable ):
     """
     str_prop = Field( default='default_val' )
     int_prop = Field( name='int_prop_named' )
+
+
+@register_class
+class MyTypedComplexClass( Serializable ):
+    """
+    complex class to test hierarchical serialization
+    """
+    nested = Nested( field_type=MyBasicClass )
+    prop = Field()
+
+
+@register_class
+class MyOtherTypedComplexClass( Serializable ):
+    """
+    complex class to test list serialization
+    """
+    str_prop = Field()
+    nested_list_prop = List( field_type=MyBasicClass )

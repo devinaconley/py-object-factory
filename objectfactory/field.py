@@ -41,7 +41,20 @@ class Nested( Field ):
         """
         if value is None:
             return
-        obj = Factory.create_object( value )
+
+        if '_type' in value:
+            obj = Factory.create_object( value )
+            if self._field_type and not isinstance( obj, self._field_type ):
+                raise ValueError(
+                    '{} is not an instance of type: {}'.format(
+                        type( obj ).__name__, self._field_type.__name__ )
+                )
+        elif self._field_type:
+            obj = self._field_type()
+            obj.deserialize( value )
+        else:
+            raise ValueError( 'Cannot infer type information' )
+
         setattr( instance, self._key, obj )
 
 
@@ -50,10 +63,10 @@ class List( Field ):
     field type for list of serializable objects
     """
 
-    def __init__( self, default=None ):
+    def __init__( self, default=None, name=None, field_type=None ):
         if default is None:
             default = []
-        super().__init__( default )
+        super().__init__( default=default, name=name, field_type=field_type )
 
     def serialize_field( self, instance, deserializable=True ):
         """
@@ -82,5 +95,17 @@ class List( Field ):
         """
         lst = []
         for body in value:
-            lst.append( Factory.create_object( body ) )
+            if '_type' in body:
+                obj = Factory.create_object( body )
+                if self._field_type and not isinstance( obj, self._field_type ):
+                    raise ValueError(
+                        '{} is not an instance of type: {}'.format(
+                            type( obj ).__name__, self._field_type.__name__ )
+                    )
+            elif self._field_type:
+                obj = self._field_type()
+                obj.deserialize( body )
+            else:
+                raise ValueError( 'Cannot infer type information' )
+            lst.append( obj )
         setattr( instance, self._key, lst )
