@@ -28,7 +28,7 @@ def main():
     ]
 
     # deserialize raw product order
-    products = [objectfactory.create_object( order ) for order in raw_orders]
+    products = [objectfactory.create_object( order, object_type=Product ) for order in raw_orders]
 
     # calculate overall price
     price = sum( [prod.get_price() * prod.quantity for prod in products] )

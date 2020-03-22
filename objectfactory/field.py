@@ -6,7 +6,7 @@ implements serializable fields
 
 # src
 from .serializable import Field
-from .factory import Factory
+from .factory import create_object
 
 
 class Nested( Field ):
@@ -43,7 +43,7 @@ class Nested( Field ):
             return
 
         if '_type' in value:
-            obj = Factory.create_object( value )
+            obj = create_object( value )
             if self._field_type and not isinstance( obj, self._field_type ):
                 raise ValueError(
                     '{} is not an instance of type: {}'.format(
@@ -96,7 +96,7 @@ class List( Field ):
         lst = []
         for body in value:
             if '_type' in body:
-                obj = Factory.create_object( body )
+                obj = create_object( body )
                 if self._field_type and not isinstance( obj, self._field_type ):
                     raise ValueError(
                         '{} is not an instance of type: {}'.format(

@@ -7,7 +7,8 @@ import pytest
 
 # src
 import objectfactory
-from .testmodule.testclasses import MyBasicClass
+from objectfactory.factory import _global_factory
+from .testmodule.testclasses import MyBasicClass, MyComplexClass
 
 
 class TestFactory( object ):
@@ -20,17 +21,15 @@ class TestFactory( object ):
         validate register_class method
 
         MyBasicClass should be registered
-        :return:
         """
-        assert 'MyBasicClass' in objectfactory._Factory.registry
-        assert 'test.testmodule.testclasses.MyBasicClass' in objectfactory._Factory.registry
+        assert 'MyBasicClass' in _global_factory.registry
+        assert 'test.testmodule.testclasses.MyBasicClass' in _global_factory.registry
 
     def test_create_object( self ):
         """
         validate create object method
 
         expect object to be deserialized properly
-        :return:
         """
         body = {
             '_type': 'test.testmodule.testclasses.MyBasicClass',
@@ -48,7 +47,6 @@ class TestFactory( object ):
         validate create object method without fully qualified path
 
         expect object to be deserialized properly
-        :return:
         """
         body = {
             '_type': 'MyBasicClass',
@@ -66,7 +64,6 @@ class TestFactory( object ):
         validate create object method when full path is altered
 
         expect object to be deserialized properly based on last path element
-        :return:
         """
         body = {
             '_type': 'some.other.module.MyBasicClass',
@@ -83,8 +80,7 @@ class TestFactory( object ):
         """
         validate create object method throws when unregistered
 
-        expect object to be deserialized properly
-        :return:
+        expect ValueError to be raised indicating that the type is not registered
         """
         body = {
             '_type': 'MyClassThatDoesNotExist',
@@ -93,3 +89,37 @@ class TestFactory( object ):
         }
         with pytest.raises( ValueError, match=r'.*type MyClassThatDoesNotExist not found.*' ):
             _ = objectfactory.create_object( body )
+
+    def test_create_object_typed( self ):
+        """
+        validate create object method when enforcing type
+
+        expect object to be returned with full type hinting
+        """
+        body = {
+            '_type': 'test.testmodule.testclasses.MyBasicClass',
+            'str_prop': 'somestring',
+            'int_prop': 42,
+        }
+        obj = objectfactory.create_object( body, object_type=MyBasicClass )
+
+        assert isinstance( obj, MyBasicClass )
+        assert obj.str_prop == 'somestring'
+        assert obj.int_prop == 42
+
+    def test_create_object_typed_( self ):
+        """
+        validate create object method throws when type mismatch
+
+        expect TypeError to be raised indicating a type mismatch
+        """
+        body = {
+            '_type': 'test.testmodule.testclasses.MyBasicClass',
+            'str_prop': 'somestring',
+            'int_prop': 42,
+        }
+        with pytest.raises(
+                TypeError,
+                match=r'.*Object type MyBasicClass is not a MyComplexClass.*'
+        ):
+            _ = objectfactory.create_object( body, object_type=MyComplexClass )
