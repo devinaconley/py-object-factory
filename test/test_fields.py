@@ -328,6 +328,36 @@ class TestNestedList( object ):
             assert nested_obj.str_prop == nested_strings[i]
             assert nested_obj.int_prop == nested_ints[i]
 
+    def test_default_unique( self ):
+        """
+        test default nested field is unique between instances
+
+        expect the default value to be replicated for each instance
+        of the parent class, to avoid unintentional memory sharing
+
+        :return:
+        """
+        obj_a = MyOtherComplexClass()
+        obj_b = MyOtherComplexClass()
+
+        assert len( obj_a.nested_list_prop ) == 0
+        assert len( obj_b.nested_list_prop ) == 0
+
+        obj_a.nested_list_prop.append( MyBasicClass( str_prop='x' ) )
+
+        assert len( obj_a.nested_list_prop ) == 1
+        assert obj_a.nested_list_prop[0].str_prop == 'x'
+        assert len( obj_b.nested_list_prop ) == 0
+
+        obj_a.nested_list_prop.append( MyBasicClass( str_prop='y' ) )
+        obj_b.nested_list_prop.append( MyBasicClass( str_prop='z' ) )
+
+        assert len( obj_a.nested_list_prop ) == 2
+        assert obj_a.nested_list_prop[0].str_prop == 'x'
+        assert obj_a.nested_list_prop[1].str_prop == 'y'
+        assert len( obj_b.nested_list_prop ) == 1
+        assert obj_b.nested_list_prop[0].str_prop == 'z'
+
 
 class TestFieldOptionals( object ):
     """

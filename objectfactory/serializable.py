@@ -23,7 +23,12 @@ class Field( object ):
         self._field_type = field_type
 
     def __get__( self, instance, owner ):
-        return getattr( instance, self._key, self._default )
+        try:
+            return getattr( instance, self._key )
+        except AttributeError:
+            # lazily create copy of default
+            setattr( instance, self._key, deepcopy( self._default ) )
+            return getattr( instance, self._key )
 
     def __set__( self, instance, value ):
         setattr( instance, self._key, value )
