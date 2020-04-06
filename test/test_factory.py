@@ -107,7 +107,7 @@ class TestFactory( object ):
         assert obj.str_prop == 'somestring'
         assert obj.int_prop == 42
 
-    def test_create_object_typed_( self ):
+    def test_create_object_typed_invalid( self ):
         """
         validate create object method throws when type mismatch
 

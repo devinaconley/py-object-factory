@@ -84,7 +84,7 @@ class TestSerializable( object ):
 
         :return:
         """
-        obj = MyBasicClass(
+        obj = MyBasicClass.from_kwargs(
             str_prop='some string',
             int_prop=12
         )

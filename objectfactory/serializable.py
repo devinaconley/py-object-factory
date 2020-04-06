@@ -96,13 +96,17 @@ class Serializable( object, metaclass=Meta ):
     """
     _fields = {}
 
-    def __init__( self, *args, **kwargs ):
+    @classmethod
+    def from_kwargs( cls, **kwargs ):
         """
         accept any fields as keyword args to constructor
         """
+        obj = cls()
         for key, val in kwargs.items():
-            if key in self._fields:
-                self._fields[key].__set__( self, val )
+            if key in obj._fields:
+                obj._fields[key].__set__( obj, val )
+
+        return obj
 
     def serialize( self, deserializable: bool = True, use_full_type: bool = True ) -> dict:
         """

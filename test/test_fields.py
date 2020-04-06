@@ -343,14 +343,14 @@ class TestNestedList( object ):
         assert len( obj_a.nested_list_prop ) == 0
         assert len( obj_b.nested_list_prop ) == 0
 
-        obj_a.nested_list_prop.append( MyBasicClass( str_prop='x' ) )
+        obj_a.nested_list_prop.append( MyBasicClass.from_kwargs( str_prop='x' ) )
 
         assert len( obj_a.nested_list_prop ) == 1
         assert obj_a.nested_list_prop[0].str_prop == 'x'
         assert len( obj_b.nested_list_prop ) == 0
 
-        obj_a.nested_list_prop.append( MyBasicClass( str_prop='y' ) )
-        obj_b.nested_list_prop.append( MyBasicClass( str_prop='z' ) )
+        obj_a.nested_list_prop.append( MyBasicClass.from_kwargs( str_prop='y' ) )
+        obj_b.nested_list_prop.append( MyBasicClass.from_kwargs( str_prop='z' ) )
 
         assert len( obj_a.nested_list_prop ) == 2
         assert obj_a.nested_list_prop[0].str_prop == 'x'
