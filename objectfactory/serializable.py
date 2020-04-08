@@ -5,13 +5,13 @@ implements base abstract class, metaclass, and base field class for serializable
 """
 
 # lib
-import abc
+from abc import ABCMeta
 
 # src
 from .base import FieldABC, SerializableABC
 
 
-class Meta( abc.ABCMeta ):
+class Meta( ABCMeta ):
     """
     metaclass for serializable classes
 
@@ -28,7 +28,7 @@ class Meta( abc.ABCMeta ):
         :param attributes:
         :return:
         """
-        obj = abc.ABCMeta.__new__( mcs, name, bases, attributes )
+        obj = ABCMeta.__new__( mcs, name, bases, attributes )
 
         # init and collect serializable fields of parents
         fields = {}

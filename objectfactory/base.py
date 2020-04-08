@@ -4,10 +4,10 @@ base module
 implements abstract base classes for objectfactory
 """
 
-import abc
+from abc import ABC, abstractmethod
 
 
-class FieldABC( abc.ABC ):
+class FieldABC( ABC ):
     """
     abstract base class for serializable field
     """
@@ -18,32 +18,32 @@ class FieldABC( abc.ABC ):
         self._default = default
         self._field_type = field_type
 
-    @abc.abstractmethod
+    @abstractmethod
     def __get__( self, instance, owner ):
         pass
 
-    @abc.abstractmethod
+    @abstractmethod
     def __set__( self, instance, value ):
         pass
 
-    @abc.abstractmethod
+    @abstractmethod
     def serialize( self, instance, include_type: bool = True ):
         pass
 
-    @abc.abstractmethod
+    @abstractmethod
     def deserialize( self, instance, value ):
         pass
 
 
-class SerializableABC( abc.ABC ):
+class SerializableABC( ABC ):
     """
     abstract base class for serializable object
     """
 
-    @abc.abstractmethod
+    @abstractmethod
     def serialize( self, include_type: bool = True, use_full_type: bool = True ) -> dict:
         pass
 
-    @abc.abstractmethod
+    @abstractmethod
     def deserialize( self, body: dict ):
         pass

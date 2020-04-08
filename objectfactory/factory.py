@@ -26,7 +26,6 @@ class Factory( object ):
         """
         register class with factory
 
-        :param name:
         :param serializable:
         :return:
         """
