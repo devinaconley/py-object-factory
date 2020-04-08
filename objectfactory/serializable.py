@@ -5,56 +5,13 @@ implements base abstract class, metaclass, and base field class for serializable
 """
 
 # lib
-from copy import deepcopy
+import abc
+
+# src
+from .base import FieldABC, SerializableABC
 
 
-class Field( object ):
-    """
-    base class for serializable field
-
-    this is a class level descriptor for abstracting access to fields of
-    serializable objects
-    """
-
-    def __init__( self, default=None, name=None, field_type=None ):
-        self._name = name
-        self._key = None  # note: this will be set from parent metaclass __new__
-        self._default = default
-        self._field_type = field_type
-
-    def __get__( self, instance, owner ):
-        try:
-            return getattr( instance, self._key )
-        except AttributeError:
-            # lazily create copy of default
-            setattr( instance, self._key, deepcopy( self._default ) )
-            return getattr( instance, self._key )
-
-    def __set__( self, instance, value ):
-        setattr( instance, self._key, value )
-
-    def serialize_field( self, instance, deserializable=True ):
-        """
-        accessor to be called during serialization
-
-        :param instance:
-        :param deserializable:
-        :return:
-        """
-        return getattr( deepcopy( instance ), self._key, self._default )
-
-    def deserialize_field( self, instance, value ):
-        """
-        setter to be called during deserialization
-
-        :param instance:
-        :param value:
-        :return:
-        """
-        setattr( instance, self._key, deepcopy( value ) )
-
-
-class Meta( type ):
+class Meta( abc.ABCMeta ):
     """
     metaclass for serializable classes
 
@@ -71,7 +28,7 @@ class Meta( type ):
         :param attributes:
         :return:
         """
-        obj = type.__new__( mcs, name, bases, attributes )
+        obj = abc.ABCMeta.__new__( mcs, name, bases, attributes )
 
         # init and collect serializable fields of parents
         fields = {}
@@ -80,7 +37,7 @@ class Meta( type ):
 
         # populate with all serializable class descriptors
         for name, attr in attributes.items():
-            if isinstance( attr, Field ):
+            if isinstance( attr, FieldABC ):
                 if attr._name is None:
                     attr._name = name
                 attr._key = '_' + attr._name  # define key that descriptor will use to access data
@@ -90,7 +47,7 @@ class Meta( type ):
         return obj
 
 
-class Serializable( object, metaclass=Meta ):
+class Serializable( SerializableABC, metaclass=Meta ):
     """
     base abstract class for serializable objects
     """
@@ -108,24 +65,24 @@ class Serializable( object, metaclass=Meta ):
 
         return obj
 
-    def serialize( self, deserializable: bool = True, use_full_type: bool = True ) -> dict:
+    def serialize( self, include_type: bool = True, use_full_type: bool = True ) -> dict:
         """
         serialize model to JSON
 
-        :param deserializable: if true, type information will be included in body
+        :param include_type: if true, type information will be included in body
         :param use_full_type: if true, the fully qualified path with be specified in body
         :return:
         :rtype dict
         """
         body = {}
-        if deserializable:
+        if include_type:
             if use_full_type:
                 body['_type'] = self.__class__.__module__ + '.' + self.__class__.__name__
             else:
                 body['_type'] = self.__class__.__name__
 
         for _, attr in self._fields.items():
-            body[attr._name] = attr.serialize_field( self, deserializable=deserializable )
+            body[attr._name] = attr.serialize( self, include_type=include_type )
 
         return body
 
@@ -139,4 +96,4 @@ class Serializable( object, metaclass=Meta ):
         for _, attr in self._fields.items():
             if attr._name not in body:
                 continue  # accept default
-            attr.deserialize_field( self, body[attr._name] )
+            attr.deserialize( self, body[attr._name] )

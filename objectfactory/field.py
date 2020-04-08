@@ -4,9 +4,52 @@ field module
 implements serializable fields
 """
 
+# lib
+from copy import deepcopy
+
 # src
-from .serializable import Field
+from .base import FieldABC
 from .factory import create_object
+
+
+class Field( FieldABC ):
+    """
+    base class for serializable field
+
+    this is a class level descriptor for abstracting access to fields of
+    serializable objects
+    """
+
+    def __get__( self, instance, owner ):
+        try:
+            return getattr( instance, self._key )
+        except AttributeError:
+            # lazily create copy of default
+            setattr( instance, self._key, deepcopy( self._default ) )
+            return getattr( instance, self._key )
+
+    def __set__( self, instance, value ):
+        setattr( instance, self._key, value )
+
+    def serialize( self, instance, include_type=True ):
+        """
+        accessor to be called during serialization
+
+        :param instance:
+        :param include_type:
+        :return:
+        """
+        return getattr( deepcopy( instance ), self._key, self._default )
+
+    def deserialize( self, instance, value ):
+        """
+        setter to be called during deserialization
+
+        :param instance:
+        :param value:
+        :return:
+        """
+        setattr( instance, self._key, deepcopy( value ) )
 
 
 class Nested( Field ):
@@ -14,22 +57,22 @@ class Nested( Field ):
     field type for nested serializable object
     """
 
-    def serialize_field( self, instance, deserializable=True ):
+    def serialize( self, instance, include_type=True ):
         """
         accessor to be called during serialization
 
         serialize() is called recursively on the nested object
 
         :param instance:
-        :param deserializable:
+        :param include_type:
         :return:
         """
         obj = getattr( instance, self._key, self._default )
         if obj is None:
             return None
-        return obj.serialize( deserializable=deserializable )
+        return obj.serialize( include_type=include_type )
 
-    def deserialize_field( self, instance, value ):
+    def deserialize( self, instance, value ):
         """
         setter to be called during deserialization
 
@@ -68,22 +111,22 @@ class List( Field ):
             default = []
         super().__init__( default=default, name=name, field_type=field_type )
 
-    def serialize_field( self, instance, deserializable=True ):
+    def serialize( self, instance, include_type=True ):
         """
         accessor to be called during serialization
 
         iterate across list and call serialize() recursively on each object
 
         :param instance:
-        :param deserializable:
+        :param include_type:
         :return:
         """
         lst = []
         for obj in getattr( instance, self._key, self._default ):
-            lst.append( obj.serialize( deserializable=deserializable ) )
+            lst.append( obj.serialize( include_type=include_type ) )
         return lst
 
-    def deserialize_field( self, instance, value ):
+    def deserialize( self, instance, value ):
         """
         setter to be called during deserialization
 
