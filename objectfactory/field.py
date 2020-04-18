@@ -6,6 +6,7 @@ implements serializable fields
 
 # lib
 from copy import deepcopy
+import marshmallow
 
 # src
 from .base import FieldABC
@@ -50,6 +51,16 @@ class Field( FieldABC ):
         :return:
         """
         setattr( instance, self._key, deepcopy( value ) )
+
+    def marshmallow( self ):
+        """
+        create marshmallow field
+
+        :return:
+        """
+        return marshmallow.fields.Field(
+            data_key=self._name
+        )
 
 
 class Nested( Field ):

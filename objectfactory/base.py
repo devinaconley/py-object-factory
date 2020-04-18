@@ -34,6 +34,10 @@ class FieldABC( ABC ):
     def deserialize( self, instance, value ):
         pass
 
+    @abstractmethod
+    def marshmallow( self ):
+        pass
+
 
 class SerializableABC( ABC ):
     """

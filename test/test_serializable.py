@@ -2,20 +2,47 @@
 module for testing functionality of serializable objects
 """
 
+# lib
+import marshmallow
+
 # src
+from objectfactory import Serializable, Field
 from .testmodule.testclasses import MyBasicClass, MySubClass
 
 
-class TestSerializable( object ):
+class TestClassDefinition( object ):
     """
-    test case for basic serializable object with primitive fields
+    test group for definition of serializable object
+    """
+
+    def test_schema_creation( self ):
+        """
+        test creation of marshmallow schema
+
+        expect schema to contain each field defined in serializable class
+        """
+
+        class MyClass( Serializable ):
+            some_field = Field()
+            another_field = Field()
+
+        schema = MyClass._schema
+        assert issubclass( schema, marshmallow.Schema )
+        assert len( schema._declared_fields ) == 2
+        assert 'some_field' in schema._declared_fields
+        assert isinstance( schema._declared_fields['some_field'], marshmallow.fields.Field )
+        assert 'another_field' in schema._declared_fields
+        assert isinstance( schema._declared_fields['another_field'], marshmallow.fields.Field )
+
+
+class TestSerialization( object ):
+    """
+    test group for serialization of basic object with primitive fields
     """
 
     def test_serialize( self ):
         """
         test serialization
-
-        :return:
         """
         obj = MyBasicClass()
         obj.str_prop = 'my awesome string'
@@ -29,8 +56,6 @@ class TestSerializable( object ):
     def test_deserialize( self ):
         """
         test deserialization
-
-        :return:
         """
         body = {
             '_type': 'MyBasicClass',
@@ -50,8 +75,6 @@ class TestSerializable( object ):
         test deserializing multiple objects of same class
 
         validate there is no conflict in values of class level descriptors
-
-        :return:
         """
         body1 = {
             '_type': 'MyBasicClass',
@@ -81,8 +104,6 @@ class TestSerializable( object ):
         test initializing class with keywords based on fields
 
         expect any fields to passable as a keyword arg to init
-
-        :return:
         """
         obj = MyBasicClass.from_kwargs(
             str_prop='some string',
@@ -110,7 +131,7 @@ class TestSerializable( object ):
 
 class TestSubClass( object ):
     """
-    test case for sub-classing another serializable model
+    test group for sub-classing another serializable model
     """
 
     def test_serialize( self ):
@@ -119,8 +140,6 @@ class TestSubClass( object ):
 
         expect members of both parent and sub-class to be serialized, _type string
         should be MySubClass, and override should not cause conflict
-
-        :return:
         """
         obj = MySubClass()
         obj.str_prop = 'parent_class_string'
@@ -140,8 +159,6 @@ class TestSubClass( object ):
 
         expect both parent and sub-class members to be properly loaded, obj type
         should be MySubClass, and override should not cause conflict
-
-        :return:
         """
         body = {
             '_type': 'MySubClass',

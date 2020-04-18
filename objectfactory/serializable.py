@@ -6,6 +6,7 @@ implements base abstract class, metaclass, and base field class for serializable
 
 # lib
 from abc import ABCMeta
+import marshmallow
 
 # src
 from .base import FieldABC, SerializableABC
@@ -36,14 +37,26 @@ class Meta( ABCMeta ):
             fields.update( getattr( base, '_fields', {} ) )
 
         # populate with all serializable class descriptors
-        for name, attr in attributes.items():
+        for attr_name, attr in attributes.items():
             if isinstance( attr, FieldABC ):
                 if attr._name is None:
-                    attr._name = name
+                    attr._name = attr_name
                 attr._key = '_' + attr._name  # define key that descriptor will use to access data
-                fields[name] = attr
+                fields[attr_name] = attr
 
+        # generate marshmallow schema
+        marsh_fields = {
+            attr_name: attr.marshmallow()
+            for attr_name, attr in fields.items()
+        }
+        schema = marshmallow.Schema.from_dict(
+            marsh_fields,
+            name='_{}Schema'.format( name )
+        )
+
+        # set fields and schema
         setattr( obj, '_fields', fields )
+        setattr( obj, '_schema', schema )
         return obj
 
 
@@ -51,7 +64,8 @@ class Serializable( SerializableABC, metaclass=Meta ):
     """
     base abstract class for serializable objects
     """
-    _fields = {}
+    _fields = None
+    _schema = None
 
     @classmethod
     def from_kwargs( cls, **kwargs ):
