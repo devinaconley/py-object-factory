@@ -15,6 +15,27 @@ class TestClassDefinition( object ):
     test group for definition of serializable object
     """
 
+    def test_fields_collected( self ):
+        """
+        test collection of field descriptors
+
+        expect each field defined in serializable class to be detected
+        and indexed under the _fields parameter
+        """
+
+        class MyClass( Serializable ):
+            some_field = Field()
+            another_field = Field()
+            not_a_field = 'some class attribute'
+
+        assert isinstance( MyClass._fields, dict )
+        assert len( MyClass._fields ) == 2
+        assert 'some_field' in MyClass._fields
+        assert isinstance( MyClass._fields['some_field'], Field )
+        assert 'another_field' in MyClass._fields
+        assert isinstance( MyClass._fields['another_field'], Field )
+        assert 'not_a_field' not in MyClass._fields
+
     def test_schema_creation( self ):
         """
         test creation of marshmallow schema
