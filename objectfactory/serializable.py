@@ -70,10 +70,22 @@ class Serializable( SerializableABC, metaclass=Meta ):
     @classmethod
     def from_kwargs( cls, **kwargs ):
         """
-        accept any fields as keyword args to constructor
+        constructor to accept any fields as keyword args
         """
         obj = cls()
         for key, val in kwargs.items():
+            if key in obj._fields:
+                obj._fields[key].__set__( obj, val )
+
+        return obj
+
+    @classmethod
+    def from_dict( cls, body: dict ):
+        """
+        constructor to set data with dictionary
+        """
+        obj = cls()
+        for key, val in body.items():
             if key in obj._fields:
                 obj._fields[key].__set__( obj, val )
 
@@ -111,3 +123,32 @@ class Serializable( SerializableABC, metaclass=Meta ):
             if attr._name not in body:
                 continue  # accept default
             attr.deserialize( self, body[attr._name] )
+
+    def serialize_marsh( self, include_type: bool = True, use_full_type: bool = True ) -> dict:
+        """
+        dev method until marshmallow integration is complete
+
+        :param include_type:
+        :param use_full_type:
+        :return:
+        """
+        body = self._schema().dump( self )
+        if include_type:
+            if use_full_type:
+                body['_type'] = self.__class__.__module__ + '.' + self.__class__.__name__
+            else:
+                body['_type'] = self.__class__.__name__
+        return body
+
+    def deserialize_marsh( self, body: dict ):
+        """
+        dev method until marshmallow integration is complete
+
+        :param body:
+        :return:
+        """
+        data = self._schema().load( body, unknown=marshmallow.EXCLUDE )
+        for name, attr in self._fields.items():
+            if attr._name not in body:
+                continue
+            setattr( self, name, data[attr._name] )

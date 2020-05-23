@@ -59,7 +59,32 @@ class Field( FieldABC ):
         :return:
         """
         return marshmallow.fields.Field(
-            data_key=self._name
+            data_key=self._name,
+            default=self._default
+        )
+
+
+class Integer( Field ):
+    """
+    field type for integer
+    """
+
+    def marshmallow( self ):
+        return marshmallow.fields.Integer(
+            data_key=self._name,
+            default=self._default
+        )
+
+
+class String( Field ):
+    """
+    field type for string
+    """
+
+    def marshmallow( self ):
+        return marshmallow.fields.String(
+            data_key=self._name,
+            default=self._default
         )
 
 

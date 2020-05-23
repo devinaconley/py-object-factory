@@ -462,7 +462,6 @@ class TestFieldOptionals( object ):
             str_prop = Field( default='default_val' )
 
         obj = MyTestClass()
-        obj.int_prop = 99
 
         assert obj.str_prop == 'default_val'
 
