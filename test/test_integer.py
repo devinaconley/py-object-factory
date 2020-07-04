@@ -82,7 +82,7 @@ class TestInteger( object ):
         """
         test deserialization casting
 
-        expect float data to be casted to integer
+        expect float data to be cast to integer
         """
 
         class MyTestClass( Serializable ):
