@@ -11,6 +11,7 @@ import marshmallow
 # src
 from .base import FieldABC
 from .factory import create_object
+from .nested import NestedFactoryField
 
 
 class Field( FieldABC ):
@@ -135,6 +136,13 @@ class Nested( Field ):
             raise ValueError( 'Cannot infer type information' )
 
         setattr( instance, self._key, obj )
+
+    def marshmallow( self ):
+        return NestedFactoryField(
+            field_type=self._field_type,
+            data_key=self._name,
+            default=self._default
+        )
 
 
 class List( Field ):
