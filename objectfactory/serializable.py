@@ -132,6 +132,11 @@ class Serializable( SerializableABC, metaclass=Meta ):
         :param use_full_type:
         :return:
         """
+        self._serialize_kwargs = {
+            'include_type': include_type,
+            'use_full_type': use_full_type
+        }
+
         body = self._schema().dump( self )
         if include_type:
             if use_full_type:

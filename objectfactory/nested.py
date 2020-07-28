@@ -30,8 +30,7 @@ class NestedFactoryField( marshmallow.fields.Field ):
         """
         if not isinstance( value, Serializable ):
             return {}
-        # TODO - pass in kwargs
-        return value.serialize_marsh()
+        return value.serialize_marsh( **obj._serialize_kwargs )
 
     def _deserialize( self, value, attr, data, **kwargs ):
         """

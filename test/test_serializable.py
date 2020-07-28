@@ -56,6 +56,26 @@ class TestClassDefinition( object ):
         assert isinstance( schema._declared_fields['another_field'], marshmallow.fields.Field )
 
 
+class TestSerializableObject( object ):
+    """
+    test group for normal python usage of serializable object
+    """
+
+    def test_init_keywords( self ):
+        """
+        test initializing class with keywords based on fields
+
+        expect any fields to passable as a keyword arg to init
+        """
+        obj = MyBasicClass.from_kwargs(
+            str_prop='some string',
+            int_prop=12
+        )
+
+        assert obj.str_prop == 'some string'
+        assert obj.int_prop == 12
+
+
 class TestSerialization( object ):
     """
     test group for serialization of basic object with primitive fields
@@ -120,32 +140,33 @@ class TestSerialization( object ):
         assert obj2.str_prop == 'string2'
         assert obj2.int_prop == 9002
 
-    def test_init_keywords( self ):
-        """
-        test initializing class with keywords based on fields
-
-        expect any fields to passable as a keyword arg to init
-        """
-        obj = MyBasicClass.from_kwargs(
-            str_prop='some string',
-            int_prop=12
-        )
-
-        assert obj.str_prop == 'some string'
-        assert obj.int_prop == 12
-
     def test_serialize_short_type( self ):
         """
         test serialization without fully qualified path
 
-        :return:
+        expect short name to be set as value in type field
         """
         obj = MyBasicClass()
         obj.str_prop = 'my awesome string'
         obj.int_prop = 1234
-        body = obj.serialize( use_full_type=False )
+        body = obj.serialize_marsh( use_full_type=False )
 
         assert body['_type'] == 'MyBasicClass'
+        assert body['str_prop'] == 'my awesome string'
+        assert body['int_prop'] == 1234
+
+    def test_serialize_no_type( self ):
+        """
+        test serialization without type info
+
+        expect _type key to be excluded
+        """
+        obj = MyBasicClass()
+        obj.str_prop = 'my awesome string'
+        obj.int_prop = 1234
+        body = obj.serialize_marsh( include_type=False )
+
+        assert '_type' not in body
         assert body['str_prop'] == 'my awesome string'
         assert body['int_prop'] == 1234
 
