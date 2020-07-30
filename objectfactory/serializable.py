@@ -93,44 +93,12 @@ class Serializable( SerializableABC, metaclass=Meta ):
 
     def serialize( self, include_type: bool = True, use_full_type: bool = True ) -> dict:
         """
-        serialize model to JSON
+        serialize model to JSON dict
 
         :param include_type: if true, type information will be included in body
         :param use_full_type: if true, the fully qualified path with be specified in body
         :return:
         :rtype dict
-        """
-        body = {}
-        if include_type:
-            if use_full_type:
-                body['_type'] = self.__class__.__module__ + '.' + self.__class__.__name__
-            else:
-                body['_type'] = self.__class__.__name__
-
-        for _, attr in self._fields.items():
-            body[attr._name] = attr.serialize( self, include_type=include_type )
-
-        return body
-
-    def deserialize( self, body: dict ):
-        """
-        deserialize model from JSON
-
-        :param body:
-        :return:
-        """
-        for _, attr in self._fields.items():
-            if attr._name not in body:
-                continue  # accept default
-            attr.deserialize( self, body[attr._name] )
-
-    def serialize_marsh( self, include_type: bool = True, use_full_type: bool = True ) -> dict:
-        """
-        dev method until marshmallow integration is complete
-
-        :param include_type:
-        :param use_full_type:
-        :return:
         """
         self._serialize_kwargs = {
             'include_type': include_type,
@@ -145,9 +113,9 @@ class Serializable( SerializableABC, metaclass=Meta ):
                 body['_type'] = self.__class__.__name__
         return body
 
-    def deserialize_marsh( self, body: dict ):
+    def deserialize( self, body: dict ):
         """
-        dev method until marshmallow integration is complete
+        deserialize model from JSON dict
 
         :param body:
         :return:
@@ -156,4 +124,6 @@ class Serializable( SerializableABC, metaclass=Meta ):
         for name, attr in self._fields.items():
             if attr._name not in body:
                 continue
-            setattr( self, name, data[attr._name] )
+            if name not in data:
+                continue
+            setattr( self, name, data[name] )

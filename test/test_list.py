@@ -7,7 +7,7 @@ import pytest
 
 # src
 import objectfactory
-from objectfactory import Serializable, Field, Nested, List, register_class
+from objectfactory import Serializable, List, String, Integer, register_class
 
 
 class TestPrimitiveList( object ):
@@ -24,8 +24,8 @@ class TestPrimitiveList( object ):
         """
 
         class MyTestClass( Serializable ):
-            str_list_prop = Field()
-            int_list_prop = Field()
+            str_list_prop = List( field_type=String )
+            int_list_prop = List( field_type=Integer )
 
         obj = MyTestClass()
         obj.str_list_prop = ['hello', 'world']
@@ -47,8 +47,8 @@ class TestPrimitiveList( object ):
         """
 
         class MyTestClass( Serializable ):
-            str_list_prop = Field()
-            int_list_prop = Field()
+            str_list_prop = List( field_type=String )
+            int_list_prop = List( field_type=Integer )
 
         body = {
             '_type': 'MyTestClass',
@@ -72,8 +72,8 @@ class TestPrimitiveList( object ):
         """
 
         class MyTestClass( Serializable ):
-            str_list_prop = Field()
-            int_list_prop = Field()
+            str_list_prop = List( field_type=String )
+            int_list_prop = List( field_type=Integer )
 
         obj = MyTestClass()
         obj.str_list_prop = ['hello', 'world']
@@ -96,8 +96,8 @@ class TestPrimitiveList( object ):
         """
 
         class MyTestClass( Serializable ):
-            str_list_prop = Field()
-            int_list_prop = Field()
+            str_list_prop = List( field_type=String )
+            int_list_prop = List( field_type=Integer )
 
         body = {
             '_type': 'MyTestClass',
@@ -137,11 +137,11 @@ class TestNestedList( object ):
 
         @register_class
         class MyNestedClass( Serializable ):
-            str_prop = Field()
-            int_prop = Field()
+            str_prop = String()
+            int_prop = Integer()
 
         class MyTestClass( Serializable ):
-            str_prop = Field()
+            str_prop = String()
             nested_list_prop = List()
 
         obj = MyTestClass()
@@ -157,7 +157,7 @@ class TestNestedList( object ):
             temp.int_prop = n
             obj.nested_list_prop.append( temp )
 
-        body = obj.serialize_marsh()
+        body = obj.serialize()
 
         assert body['_type'] == 'test.test_list.MyTestClass'
         assert body['str_prop'] == 'object name'
@@ -177,11 +177,11 @@ class TestNestedList( object ):
 
         @register_class
         class MyNestedClass( Serializable ):
-            str_prop = Field()
-            int_prop = Field()
+            str_prop = String()
+            int_prop = Integer()
 
         class MyTestClass( Serializable ):
-            str_prop = Field()
+            str_prop = String()
             nested_list_prop = List()
 
         body = {
@@ -202,7 +202,7 @@ class TestNestedList( object ):
             )
 
         obj = MyTestClass()
-        obj.deserialize_marsh( body )
+        obj.deserialize( body )
 
         assert isinstance( obj, MyTestClass )
         assert obj.str_prop == 'really great string property'
@@ -223,11 +223,11 @@ class TestNestedList( object ):
 
         @register_class
         class MyNestedClass( Serializable ):
-            str_prop = Field()
-            int_prop = Field()
+            str_prop = String()
+            int_prop = Integer()
 
         class MyTestClass( Serializable ):
-            str_prop = Field()
+            str_prop = String()
             nested_list_prop = List( field_type=MyNestedClass )
 
         body = {
@@ -247,7 +247,7 @@ class TestNestedList( object ):
             )
 
         obj = MyTestClass()
-        obj.deserialize_marsh( body )
+        obj.deserialize( body )
 
         assert isinstance( obj, MyTestClass )
         assert obj.str_prop == 'really great string property'
@@ -267,11 +267,11 @@ class TestNestedList( object ):
 
         @register_class
         class MyNestedClass( Serializable ):
-            str_prop = Field()
-            int_prop = Field()
+            str_prop = String()
+            int_prop = Integer()
 
         class MyTestClass( Serializable ):
-            str_prop = Field()
+            str_prop = Integer()
             nested_list_prop = List()
 
         obj_a = MyTestClass()

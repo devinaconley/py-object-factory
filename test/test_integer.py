@@ -52,7 +52,7 @@ class TestInteger( object ):
         obj = MyTestClass()
         obj.int_prop = 99
 
-        body = obj.serialize_marsh()
+        body = obj.serialize()
 
         assert body['_type'] == 'test.test_integer.MyTestClass'
         assert body['int_prop'] == 99
@@ -73,7 +73,7 @@ class TestInteger( object ):
         }
 
         obj = MyTestClass()
-        obj.deserialize_marsh( body )
+        obj.deserialize( body )
 
         assert isinstance( obj, MyTestClass )
         assert obj.int_prop == 99
@@ -94,7 +94,7 @@ class TestInteger( object ):
         }
 
         obj = MyTestClass()
-        obj.deserialize_marsh( body )
+        obj.deserialize( body )
 
         assert isinstance( obj, MyTestClass )
         assert type( obj.int_prop ) == int
@@ -117,4 +117,4 @@ class TestInteger( object ):
 
         obj = MyTestClass()
         with pytest.raises( marshmallow.ValidationError ):
-            obj.deserialize_marsh( body )
+            obj.deserialize( body )

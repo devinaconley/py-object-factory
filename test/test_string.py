@@ -52,7 +52,7 @@ class TestString( object ):
         obj = MyTestClass()
         obj.str_prop = 'some string'
 
-        body = obj.serialize_marsh()
+        body = obj.serialize()
 
         assert body['_type'] == 'test.test_string.MyTestClass'
         assert body['str_prop'] == 'some string'
@@ -73,7 +73,7 @@ class TestString( object ):
         }
 
         obj = MyTestClass()
-        obj.deserialize_marsh( body )
+        obj.deserialize( body )
 
         assert isinstance( obj, MyTestClass )
         assert obj.str_prop == 'another string'
@@ -95,4 +95,4 @@ class TestString( object ):
 
         obj = MyTestClass()
         with pytest.raises( marshmallow.ValidationError ):
-            obj.deserialize_marsh( body )
+            obj.deserialize( body )

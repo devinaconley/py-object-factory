@@ -149,7 +149,7 @@ class TestSerialization( object ):
         obj = MyBasicClass()
         obj.str_prop = 'my awesome string'
         obj.int_prop = 1234
-        body = obj.serialize_marsh( use_full_type=False )
+        body = obj.serialize( use_full_type=False )
 
         assert body['_type'] == 'MyBasicClass'
         assert body['str_prop'] == 'my awesome string'
@@ -164,7 +164,7 @@ class TestSerialization( object ):
         obj = MyBasicClass()
         obj.str_prop = 'my awesome string'
         obj.int_prop = 1234
-        body = obj.serialize_marsh( include_type=False )
+        body = obj.serialize( include_type=False )
 
         assert '_type' not in body
         assert body['str_prop'] == 'my awesome string'

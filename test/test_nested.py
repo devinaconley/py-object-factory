@@ -64,7 +64,7 @@ class TestNested( object ):
         obj.nested = MyNestedClass()
         obj.nested.str_prop = 'some string'
 
-        body = obj.serialize_marsh()
+        body = obj.serialize()
 
         assert body['_type'] == 'test.test_nested.MyTestClass'
         assert isinstance( body['nested'], dict )
@@ -94,7 +94,7 @@ class TestNested( object ):
         }
 
         obj = MyTestClass()
-        obj.deserialize_marsh( body )
+        obj.deserialize( body )
 
         assert isinstance( obj, MyTestClass )
         assert isinstance( obj.nested, MyNestedClass )
@@ -122,7 +122,7 @@ class TestNested( object ):
         }
 
         obj = MyTestClass()
-        obj.deserialize_marsh( body )
+        obj.deserialize( body )
 
         assert isinstance( obj, MyTestClass )
         assert isinstance( obj.nested, MyNestedClass )
@@ -157,4 +157,4 @@ class TestNested( object ):
 
         obj = MyTestClass()
         with pytest.raises( ValueError ):
-            obj.deserialize_marsh( body )
+            obj.deserialize( body )
