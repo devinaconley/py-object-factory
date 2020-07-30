@@ -196,3 +196,12 @@ class List( Field ):
                 raise ValueError( 'Cannot infer type information' )
             lst.append( obj )
         setattr( instance, self._key, lst )
+
+    def marshmallow( self ):
+        return marshmallow.fields.List(
+            NestedFactoryField(
+                field_type=self._field_type,
+                data_key=self._name,
+                default=self._default
+            )
+        )
