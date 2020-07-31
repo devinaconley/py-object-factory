@@ -35,7 +35,7 @@ class Field( FieldABC ):
 
     def marshmallow( self ):
         """
-        create marshmallow field
+        create generic marshmallow field
 
         :return:
         """
@@ -47,7 +47,7 @@ class Field( FieldABC ):
 
 class Integer( Field ):
     """
-    field type for integer
+    serializable field for integer data
     """
 
     def marshmallow( self ):
@@ -59,11 +59,23 @@ class Integer( Field ):
 
 class String( Field ):
     """
-    field type for string
+    serializable field for string data
     """
 
     def marshmallow( self ):
         return marshmallow.fields.String(
+            data_key=self._key,
+            default=self._default
+        )
+
+
+class Boolean( Field ):
+    """
+    serializable field for boolean data
+    """
+
+    def marshmallow( self ):
+        return marshmallow.fields.Boolean(
             data_key=self._key,
             default=self._default
         )
