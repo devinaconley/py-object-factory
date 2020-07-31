@@ -39,9 +39,9 @@ class Meta( ABCMeta ):
         # populate with all serializable class descriptors
         for attr_name, attr in attributes.items():
             if isinstance( attr, FieldABC ):
-                if attr._name is None:
-                    attr._name = attr_name
-                attr._key = '_' + attr._name  # define key that descriptor will use to access data
+                if attr._key is None:
+                    attr._key = attr_name
+                attr._attr_key = '_' + attr_name  # define key that descriptor will use to access data
                 fields[attr_name] = attr
 
         # generate marshmallow schema
@@ -122,7 +122,7 @@ class Serializable( SerializableABC, metaclass=Meta ):
         """
         data = self._schema().load( body, unknown=marshmallow.EXCLUDE )
         for name, attr in self._fields.items():
-            if attr._name not in body:
+            if attr._key not in body:
                 continue
             if name not in data:
                 continue

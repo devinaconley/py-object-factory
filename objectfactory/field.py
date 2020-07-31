@@ -24,14 +24,14 @@ class Field( FieldABC ):
 
     def __get__( self, instance, owner ):
         try:
-            return getattr( instance, self._key )
+            return getattr( instance, self._attr_key )
         except AttributeError:
             # lazily create copy of default
-            setattr( instance, self._key, deepcopy( self._default ) )
-            return getattr( instance, self._key )
+            setattr( instance, self._attr_key, deepcopy( self._default ) )
+            return getattr( instance, self._attr_key )
 
     def __set__( self, instance, value ):
-        setattr( instance, self._key, value )
+        setattr( instance, self._attr_key, value )
 
     def marshmallow( self ):
         """
@@ -40,7 +40,7 @@ class Field( FieldABC ):
         :return:
         """
         return marshmallow.fields.Field(
-            data_key=self._name,
+            data_key=self._key,
             default=self._default
         )
 
@@ -52,7 +52,7 @@ class Integer( Field ):
 
     def marshmallow( self ):
         return marshmallow.fields.Integer(
-            data_key=self._name,
+            data_key=self._key,
             default=self._default
         )
 
@@ -64,7 +64,7 @@ class String( Field ):
 
     def marshmallow( self ):
         return marshmallow.fields.String(
-            data_key=self._name,
+            data_key=self._key,
             default=self._default
         )
 
@@ -74,14 +74,14 @@ class Nested( Field ):
     field type for nested serializable object
     """
 
-    def __init__( self, default=None, name=None, field_type=None ):
-        super().__init__( default=default, name=name )
+    def __init__( self, default=None, key=None, field_type=None ):
+        super().__init__( default=default, key=key )
         self._field_type = field_type
 
     def marshmallow( self ):
         return NestedFactoryField(
             field_type=self._field_type,
-            data_key=self._name,
+            data_key=self._key,
             default=self._default
         )
 
@@ -91,10 +91,10 @@ class List( Field ):
     field type for list of serializable objects
     """
 
-    def __init__( self, default=None, name=None, field_type=None ):
+    def __init__( self, default=None, key=None, field_type=None ):
         if default is None:
             default = []
-        super().__init__( default=default, name=name )
+        super().__init__( default=default, key=key )
         self._field_type = field_type
 
     def marshmallow( self ):
@@ -107,4 +107,4 @@ class List( Field ):
         else:
             raise ValueError( 'Invalid field type in List: {}'.format( self._field_type ) )
 
-        return marshmallow.fields.List( cls )
+        return marshmallow.fields.List( cls, data_key=self._key )

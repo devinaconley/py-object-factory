@@ -56,7 +56,7 @@ class TestFieldOptionals( object ):
         assert isinstance( obj, MyTestClass )
         assert obj.str_prop == 'default_val'
 
-    def test_serialize_named( self ):
+    def test_serialize_keyed( self ):
         """
         test serialization
 
@@ -64,7 +64,7 @@ class TestFieldOptionals( object ):
         """
 
         class MyTestClass( Serializable ):
-            int_prop = Field( name='int_prop_named' )
+            int_prop = Field( key='int_prop_named' )
 
         obj = MyTestClass()
         obj.int_prop = 99
@@ -74,7 +74,7 @@ class TestFieldOptionals( object ):
         assert body['_type'] == 'test.test_fields.MyTestClass'
         assert body['int_prop_named'] == 99
 
-    def test_deserialize_named( self ):
+    def test_deserialize_keyed( self ):
         """
         test deserialization
 
@@ -82,7 +82,7 @@ class TestFieldOptionals( object ):
         """
 
         class MyTestClass( Serializable ):
-            int_prop = Field( name='int_prop_named' )
+            int_prop = Field( key='int_prop_named' )
 
         body = {
             '_type': 'MyTestClass',
