@@ -25,7 +25,7 @@ class Square( objectfactory.Serializable ):
     """
     serializable square class
     """
-    side = objectfactory.Field()
+    side = objectfactory.Float()
 
     def get_area( self ) -> float:
         """
@@ -41,8 +41,8 @@ class Triangle( objectfactory.Serializable ):
     """
     serializable triangle class
     """
-    base = objectfactory.Field()
-    height = objectfactory.Field()
+    base = objectfactory.Float()
+    height = objectfactory.Float()
 
     def get_area( self ) -> float:
         """
