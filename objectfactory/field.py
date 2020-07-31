@@ -81,6 +81,18 @@ class Boolean( Field ):
         )
 
 
+class Float( Field ):
+    """
+    serializable field for float data
+    """
+
+    def marshmallow( self ):
+        return marshmallow.fields.Float(
+            data_key=self._key,
+            default=self._default
+        )
+
+
 class Nested( Field ):
     """
     field type for nested serializable object
