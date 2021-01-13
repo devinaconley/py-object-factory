@@ -4,6 +4,7 @@ module for testing functionality of serializable list field
 
 # lib
 import pytest
+import marshmallow
 
 # src
 import objectfactory
@@ -62,6 +63,28 @@ class TestPrimitiveList( object ):
         assert isinstance( obj, MyTestClass )
         assert obj.str_list_prop == ['my', 'awesome', 'list', 'of', 'strings']
         assert obj.int_list_prop == [9001, 9002, 9003]
+
+    def test_deserialize_invalid( self ):
+        """
+        test deserialization validation
+
+        expect validation error to be raised on invalid integer data
+        """
+
+        class MyTestClass( Serializable ):
+            str_list_prop = List( field_type=String )
+            int_list_prop = List( field_type=Integer )
+
+        body = {
+            '_type': 'MyTestClass',
+            'str_list_prop': ['my', 'awesome', 'list', 'of', 'strings'],
+            'int_list_prop': [9001, 9002, 9003, 'string']
+        }
+
+        obj = MyTestClass()
+
+        with pytest.raises( marshmallow.ValidationError ):
+            obj.deserialize( body )
 
     def test_serialize_deep_copy( self ):
         """
@@ -256,6 +279,40 @@ class TestNestedList( object ):
             assert isinstance( nested_obj, MyNestedClass )
             assert nested_obj.str_prop == nested_strings[i]
             assert nested_obj.int_prop == nested_ints[i]
+
+    def test_deserialize_typed_invalid( self ):
+        """
+        test deserialization validation
+
+        expect validation error to be raised on invalid nested object type
+        """
+
+        @register_class
+        class MyNestedClass( Serializable ):
+            str_prop = String()
+
+        @register_class
+        class OtherClass( Serializable ):
+            str_prop = String()
+
+        class MyTestClass( Serializable ):
+            str_prop = String()
+            nested_list_prop = List( field_type=MyNestedClass )
+
+        body = {
+            '_type': 'MyTestClass',
+            'nested_list_prop': [
+                {
+                    '_type': 'OtherClass',
+                    'str_prop': 'some string',
+                }
+            ]
+        }
+
+        obj = MyTestClass()
+
+        with pytest.raises( ValueError ):
+            obj.deserialize( body )
 
     def test_default_unique( self ):
         """
