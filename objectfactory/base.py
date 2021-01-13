@@ -12,10 +12,11 @@ class FieldABC( ABC ):
     abstract base class for serializable field
     """
 
-    def __init__( self, default=None, key=None ):
+    def __init__( self, default=None, key=None, required=False ):
         self._key = key
         self._attr_key = None  # note: this will be set from parent metaclass __new__
         self._default = default
+        self._required = required
 
     @abstractmethod
     def __get__( self, instance, owner ):

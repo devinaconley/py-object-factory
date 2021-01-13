@@ -4,6 +4,7 @@ module for testing serializable List field
 
 # lib
 import pytest
+import marshmallow
 
 # src
 from objectfactory import Serializable, Field, Nested, List, register_class
@@ -19,8 +20,7 @@ class TestFieldOptionals( object ):
         """
         test serialization
 
-        expect default value to be serialized for unset str_prop, and
-        int_prop to be serialized under key int_prop_named
+        expect default value to be serialized for unset str_prop
         """
 
         class MyTestClass( Serializable ):
@@ -94,3 +94,42 @@ class TestFieldOptionals( object ):
 
         assert isinstance( obj, MyTestClass )
         assert obj.int_prop == 99
+
+    def test_deserialize_required( self ):
+        """
+        test deserialization of required field
+
+        expect required property to be deserialized into prop
+        """
+
+        class MyTestClass( Serializable ):
+            prop = Field( required=True )
+
+        body = {
+            '_type': 'MyTestClass',
+            'prop': 42
+        }
+
+        obj = MyTestClass()
+        obj.deserialize( body )
+
+        assert isinstance( obj, MyTestClass )
+        assert obj.prop == 42
+
+    def test_deserialize_required_missing( self ):
+        """
+        test deserialization of required field
+
+        expect exception to be thrown on missing prop field
+        """
+
+        class MyTestClass( Serializable ):
+            prop = Field( required=True )
+
+        body = {
+            '_type': 'MyTestClass'
+        }
+
+        obj = MyTestClass()
+        with pytest.raises( marshmallow.exceptions.ValidationError ):
+            obj.deserialize( body )
