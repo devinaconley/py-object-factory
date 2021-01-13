@@ -4,8 +4,6 @@ product order example
 use the objectfactory library to handle product orders across multiple vendors. validate incoming
 order data, load as python objects, and calculate price and estimated delivery
 """
-
-# src
 import objectfactory
 
 

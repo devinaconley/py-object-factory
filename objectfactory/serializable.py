@@ -20,13 +20,14 @@ class Meta( ABCMeta ):
     defining a new serializable class
     """
 
-    def __new__( mcs, name, bases, attributes ):
+    def __new__( mcs, name, bases, attributes, schema=None ):
         """
         collect and register all field descriptors for the new serializable object
 
         :param name:
         :param bases:
         :param attributes:
+        :param schema:
         :return:
         """
         obj = ABCMeta.__new__( mcs, name, bases, attributes )
@@ -45,14 +46,15 @@ class Meta( ABCMeta ):
                 fields[attr_name] = attr
 
         # generate marshmallow schema
-        marsh_fields = {
-            attr_name: attr.marshmallow()
-            for attr_name, attr in fields.items()
-        }
-        schema = marshmallow.Schema.from_dict(
-            marsh_fields,
-            name='_{}Schema'.format( name )
-        )
+        if schema is None:
+            marsh_fields = {
+                attr_name: attr.marshmallow()
+                for attr_name, attr in fields.items()
+            }
+            schema = marshmallow.Schema.from_dict(
+                marsh_fields,
+                name='_{}Schema'.format( name )
+            )
 
         # set fields and schema
         setattr( obj, '_fields', fields )
@@ -60,7 +62,7 @@ class Meta( ABCMeta ):
         return obj
 
 
-class Serializable( SerializableABC, metaclass=Meta ):
+class Serializable( SerializableABC, metaclass=Meta, schema=None ):
     """
     base abstract class for serializable objects
     """
