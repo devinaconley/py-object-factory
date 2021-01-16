@@ -7,8 +7,7 @@ import pytest
 import marshmallow
 
 # src
-from objectfactory import Serializable, Field, Nested, List, register_class
-from objectfactory.factory import _global_factory
+from objectfactory import Serializable, Field
 
 
 class TestFieldOptionals( object ):

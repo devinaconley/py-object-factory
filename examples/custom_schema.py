@@ -1,7 +1,8 @@
 """
 custom marshmallow schema example
 
-
+use the objectfactory library with a custom marshmallow schema
+to validate and load contact information
 """
 import objectfactory
 import marshmallow
@@ -61,7 +62,7 @@ class PhoneNumber( marshmallow.fields.Field ):
             return str( value )
 
         except AssertionError as e:
-            raise marshmallow.ValidationError( "Invalid phone number" )
+            raise marshmallow.ValidationError( 'Invalid phone number' )
 
     def _serialize( self, value, *args, **kwargs ):
         return str( value )
