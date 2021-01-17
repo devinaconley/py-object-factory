@@ -1,362 +1,13 @@
 """
-module for testing functionality of serializable fields
+module for testing serializable List field
 """
 
 # lib
 import pytest
+import marshmallow
 
 # src
-from .testmodule.testclasses import (
-    MyBasicClass,
-    MyComplexClass,
-    MyOtherComplexClass,
-    MyBasicClassWithLists,
-    MyClassWithFieldOptionals,
-    MyTypedComplexClass,
-    MyOtherTypedComplexClass
-)
-
-
-class TestNested( object ):
-    """
-    test case for hierarchical serializable object with primitive and nested fields
-    """
-
-    def test_serialize( self ):
-        """
-        test serialization
-
-        expect serialized MyBasicClass object to be nested in json body of MyComplexClass
-
-        :return:
-        """
-        obj = MyComplexClass()
-        obj.prop = 'some property'
-        obj.nested = MyBasicClass()
-        obj.nested.str_prop = 'my subclass string'
-        obj.nested.int_prop = 100
-
-        body = obj.serialize()
-
-        assert body['_type'] == 'test.testmodule.testclasses.MyComplexClass'
-        assert body['prop'] == 'some property'
-        assert body['nested']['_type'] == 'test.testmodule.testclasses.MyBasicClass'
-        assert body['nested']['str_prop'] == 'my subclass string'
-        assert body['nested']['int_prop'] == 100
-
-    def test_deserialize( self ):
-        """
-        test deserialization
-
-        expect nested json to be deserialized into a MyBasicClass object that is
-        a member of MyComplexClass
-
-        :return:
-        """
-        body = {
-            '_type': 'MyComplexClass',
-            'prop': 'really cool property',
-            'nested': {
-                '_type': 'test.testmodule.testclasses.MyBasicClass',
-                'str_prop': 'random string',
-                'int_prop': 4321
-            }
-        }
-
-        obj = MyComplexClass()
-        obj.deserialize( body )
-
-        assert isinstance( obj, MyComplexClass )
-        assert obj.prop == 'really cool property'
-        assert isinstance( obj.nested, MyBasicClass )
-        assert obj.nested.str_prop == 'random string'
-        assert obj.nested.int_prop == 4321
-
-    def test_deserialize_typed( self ):
-        """
-        test deserialization without _type field
-
-        expect nested json to be deserialized into a MyBasicClass object that is
-        a member of MyTypedComplexClass, even without nested _type field
-
-        :return:
-        """
-        body = {
-            '_type': 'MyTypedComplexClass',
-            'prop': 'really cool property',
-            'nested': {
-                'str_prop': 'random string',
-                'int_prop': 4321
-            }
-        }
-
-        obj = MyTypedComplexClass()
-        obj.deserialize( body )
-
-        assert isinstance( obj, MyTypedComplexClass )
-        assert obj.prop == 'really cool property'
-        assert isinstance( obj.nested, MyBasicClass )
-        assert obj.nested.str_prop == 'random string'
-        assert obj.nested.int_prop == 4321
-
-    def test_deserialize_enforce( self ):
-        """
-        test deserialization enforcing field type
-
-        expect an error to be thrown on deserialization because the nested
-        field is of the incorrect type
-
-        :return:
-        """
-        body = {
-            '_type': 'MyComplexClass',
-            'prop': 'really cool property',
-            'nested': {
-                '_type': 'MyBasicClassWithLists',
-                'str_prop': 'random string',
-                'int_prop': 4321
-            }
-        }
-
-        obj = MyTypedComplexClass()
-        with pytest.raises( ValueError ):
-            obj.deserialize( body )
-
-
-class TestPrimitiveList( object ):
-    """
-    test case for serialization of basic lists of primitive strings and integers
-    """
-
-    def test_serialize( self ):
-        """
-        test serialization
-
-        expect list within a standard field to function as standard list object
-        and to dump up-to-date list of all primitive values
-
-        :return:
-        """
-        obj = MyBasicClassWithLists()
-        obj.str_list_prop = ['hello', 'world']
-        obj.int_list_prop = [0, 1, 2, 3, 4]
-        obj.str_list_prop.append( '!' )
-        obj.int_list_prop.append( 5 )
-        body = obj.serialize()
-
-        assert body['_type'] == 'test.testmodule.testclasses.MyBasicClassWithLists'
-        assert body['str_list_prop'] == ['hello', 'world', '!']
-        assert body['int_list_prop'] == [0, 1, 2, 3, 4, 5]
-
-    def test_deserialize( self ):
-        """
-        test deserialization
-
-        expect json list of primitives to be loaded properly into
-        serializable object
-
-        :return:
-        """
-        body = {
-            '_type': 'MyBasicClassWithLists',
-            'str_list_prop': ['my', 'awesome', 'list', 'of', 'strings'],
-            'int_list_prop': [9001, 9002, 9003]
-        }
-
-        obj = MyBasicClassWithLists()
-        obj.deserialize( body )
-
-        assert isinstance( obj, MyBasicClassWithLists )
-        assert obj.str_list_prop == ['my', 'awesome', 'list', 'of', 'strings']
-        assert obj.int_list_prop == [9001, 9002, 9003]
-
-    def test_serialize_deep_copy( self ):
-        """
-        test serialization
-
-        expect modification to original list to have no effect on
-        serialized json body
-
-        :return:
-        """
-        obj = MyBasicClassWithLists()
-        obj.str_list_prop = ['hello', 'world']
-        obj.int_list_prop = [0, 1, 2, 3, 4]
-        body = obj.serialize()
-
-        obj.str_list_prop.append( '!' )
-        obj.int_list_prop.append( 5 )
-
-        assert body['_type'] == 'test.testmodule.testclasses.MyBasicClassWithLists'
-        assert body['str_list_prop'] == ['hello', 'world']
-        assert body['int_list_prop'] == [0, 1, 2, 3, 4]
-
-    def test_deserialize_deep_copy( self ):
-        """
-        test deserialization
-
-        expect modification to original json list of primitives to
-        have not effect on loaded serializable object
-
-        :return:
-        """
-        body = {
-            '_type': 'MyBasicClassWithLists',
-            'str_list_prop': ['my', 'awesome', 'list', 'of', 'strings'],
-            'int_list_prop': [9001, 9002, 9003]
-        }
-
-        obj = MyBasicClassWithLists()
-        obj.deserialize( body )
-
-        body['str_list_prop'].pop()
-        body['int_list_prop'].pop()
-
-        assert isinstance( obj, MyBasicClassWithLists )
-        assert obj.str_list_prop == ['my', 'awesome', 'list', 'of', 'strings']
-        assert obj.int_list_prop == [9001, 9002, 9003]
-
-
-class TestNestedList( object ):
-    """
-    test case for model containing a list of nested serializable objects
-    """
-
-    def test_serializable( self ):
-        """
-        test serialization
-
-        expect all nested instances of MyBasicClass to populate a list
-        in json body of MyOtherComplexClass
-
-        :return:
-        """
-        obj = MyOtherComplexClass()
-        obj.str_prop = 'object name'
-        obj.nested_list_prop = []
-
-        nested_strings = ['some string', 'another string', 'one more string']
-        nested_ints = [101, 102, 103]
-
-        for s, n in zip( nested_strings, nested_ints ):
-            temp = MyBasicClass()
-            temp.str_prop = s
-            temp.int_prop = n
-            obj.nested_list_prop.append( temp )
-
-        body = obj.serialize()
-
-        assert body['_type'] == 'test.testmodule.testclasses.MyOtherComplexClass'
-        assert body['str_prop'] == 'object name'
-        assert len( body['nested_list_prop'] ) == 3
-        for i, nested_body in enumerate( body['nested_list_prop'] ):
-            assert nested_body['_type'] == 'test.testmodule.testclasses.MyBasicClass'
-            assert nested_body['str_prop'] == nested_strings[i]
-            assert nested_body['int_prop'] == nested_ints[i]
-
-    def test_deserialize( self ):
-        """
-        test deserialization
-
-        expect list of nested json objects to be deserialized into a list
-        of MyBasicClass objects that is a member of MyComplexClass
-
-        :return:
-        """
-        body = {
-            '_type': 'MyOtherComplexClass',
-            'str_prop': 'really great string property',
-            'nested_list_prop': []
-        }
-        nested_strings = ['some string', 'another string', 'one more string']
-        nested_ints = [101, 102, 103]
-
-        for s, n in zip( nested_strings, nested_ints ):
-            body['nested_list_prop'].append(
-                {
-                    '_type': 'MyBasicClass',
-                    'str_prop': s,
-                    'int_prop': n
-                }
-            )
-
-        obj = MyOtherComplexClass()
-        obj.deserialize( body )
-
-        assert isinstance( obj, MyOtherComplexClass )
-        assert obj.str_prop == 'really great string property'
-        assert len( obj.nested_list_prop ) == 3
-        for i, nested_obj in enumerate( obj.nested_list_prop ):
-            assert isinstance( nested_obj, MyBasicClass )
-            assert nested_obj.str_prop == nested_strings[i]
-            assert nested_obj.int_prop == nested_ints[i]
-
-    def test_deserialize_typed( self ):
-        """
-        test deserialization without _type field
-
-        expect list of nested json objects to be deserialized into a list
-        of MyBasicClass objects that is a member of MyComplexClass, even without
-        _type field specified
-
-        :return:
-        """
-        body = {
-            '_type': 'MyOtherTypedComplexClass',
-            'str_prop': 'really great string property',
-            'nested_list_prop': []
-        }
-        nested_strings = ['some string', 'another string', 'one more string']
-        nested_ints = [101, 102, 103]
-
-        for s, n in zip( nested_strings, nested_ints ):
-            body['nested_list_prop'].append(
-                {
-                    'str_prop': s,
-                    'int_prop': n
-                }
-            )
-
-        obj = MyOtherTypedComplexClass()
-        obj.deserialize( body )
-
-        assert isinstance( obj, MyOtherTypedComplexClass )
-        assert obj.str_prop == 'really great string property'
-        assert len( obj.nested_list_prop ) == 3
-        for i, nested_obj in enumerate( obj.nested_list_prop ):
-            assert isinstance( nested_obj, MyBasicClass )
-            assert nested_obj.str_prop == nested_strings[i]
-            assert nested_obj.int_prop == nested_ints[i]
-
-    def test_default_unique( self ):
-        """
-        test default nested field is unique between instances
-
-        expect the default value to be replicated for each instance
-        of the parent class, to avoid unintentional memory sharing
-
-        :return:
-        """
-        obj_a = MyOtherComplexClass()
-        obj_b = MyOtherComplexClass()
-
-        assert len( obj_a.nested_list_prop ) == 0
-        assert len( obj_b.nested_list_prop ) == 0
-
-        obj_a.nested_list_prop.append( MyBasicClass.from_kwargs( str_prop='x' ) )
-
-        assert len( obj_a.nested_list_prop ) == 1
-        assert obj_a.nested_list_prop[0].str_prop == 'x'
-        assert len( obj_b.nested_list_prop ) == 0
-
-        obj_a.nested_list_prop.append( MyBasicClass.from_kwargs( str_prop='y' ) )
-        obj_b.nested_list_prop.append( MyBasicClass.from_kwargs( str_prop='z' ) )
-
-        assert len( obj_a.nested_list_prop ) == 2
-        assert obj_a.nested_list_prop[0].str_prop == 'x'
-        assert obj_a.nested_list_prop[1].str_prop == 'y'
-        assert len( obj_b.nested_list_prop ) == 1
-        assert obj_b.nested_list_prop[0].str_prop == 'z'
+from objectfactory import Serializable, Field
 
 
 class TestFieldOptionals( object ):
@@ -368,21 +19,20 @@ class TestFieldOptionals( object ):
         """
         test serialization
 
-        expect default value to be serialized for unset str_prop, and
-        int_prop to be serialized under key int_prop_named
-
-        :return:
+        expect default value to be serialized for unset str_prop
         """
-        obj = MyClassWithFieldOptionals()
-        obj.int_prop = 99
+
+        class MyTestClass( Serializable ):
+            str_prop = Field( default='default_val' )
+
+        obj = MyTestClass()
 
         assert obj.str_prop == 'default_val'
 
         body = obj.serialize()
 
-        assert body['_type'] == 'test.testmodule.testclasses.MyClassWithFieldOptionals'
+        assert body['_type'] == 'test.test_fields.MyTestClass'
         assert body['str_prop'] == 'default_val'
-        assert body['int_prop_named'] == 99
 
     def test_deserialize_default( self ):
         """
@@ -390,17 +40,95 @@ class TestFieldOptionals( object ):
 
         expect default value to be loaded into str_prop if not specified, and
         int_prop_named to be deserialized into int_prop
-
-        :return:
         """
+
+        class MyTestClass( Serializable ):
+            str_prop = Field( default='default_val' )
+
         body = {
-            '_type': 'MySubClass',
+            '_type': 'MyTestClass'
+        }
+
+        obj = MyTestClass()
+        obj.deserialize( body )
+
+        assert isinstance( obj, MyTestClass )
+        assert obj.str_prop == 'default_val'
+
+    def test_serialize_keyed( self ):
+        """
+        test serialization
+
+        expect int_prop to be serialized under key int_prop_named
+        """
+
+        class MyTestClass( Serializable ):
+            int_prop = Field( key='int_prop_named' )
+
+        obj = MyTestClass()
+        obj.int_prop = 99
+
+        body = obj.serialize()
+
+        assert body['_type'] == 'test.test_fields.MyTestClass'
+        assert body['int_prop_named'] == 99
+
+    def test_deserialize_keyed( self ):
+        """
+        test deserialization
+
+        expect int_prop_named to be deserialized into int_prop
+        """
+
+        class MyTestClass( Serializable ):
+            int_prop = Field( key='int_prop_named' )
+
+        body = {
+            '_type': 'MyTestClass',
             'int_prop_named': 99
         }
 
-        obj = MyClassWithFieldOptionals()
+        obj = MyTestClass()
         obj.deserialize( body )
 
-        assert isinstance( obj, MyClassWithFieldOptionals )
-        assert obj.str_prop == 'default_val'
+        assert isinstance( obj, MyTestClass )
         assert obj.int_prop == 99
+
+    def test_deserialize_required( self ):
+        """
+        test deserialization of required field
+
+        expect required property to be deserialized into prop
+        """
+
+        class MyTestClass( Serializable ):
+            prop = Field( required=True )
+
+        body = {
+            '_type': 'MyTestClass',
+            'prop': 42
+        }
+
+        obj = MyTestClass()
+        obj.deserialize( body )
+
+        assert isinstance( obj, MyTestClass )
+        assert obj.prop == 42
+
+    def test_deserialize_required_missing( self ):
+        """
+        test deserialization of required field
+
+        expect exception to be thrown on missing prop field
+        """
+
+        class MyTestClass( Serializable ):
+            prop = Field( required=True )
+
+        body = {
+            '_type': 'MyTestClass'
+        }
+
+        obj = MyTestClass()
+        with pytest.raises( marshmallow.exceptions.ValidationError ):
+            obj.deserialize( body )

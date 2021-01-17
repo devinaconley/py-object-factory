@@ -4,8 +4,6 @@ product order example
 use the objectfactory library to handle product orders across multiple vendors. validate incoming
 order data, load as python objects, and calculate price and estimated delivery
 """
-
-# src
 import objectfactory
 
 
@@ -47,8 +45,8 @@ class Product( objectfactory.Serializable ):
     """
     base abstract class for our products
     """
-    product_id = objectfactory.Field()  # all products will have an id
-    quantity = objectfactory.Field( default=1 )  # all products will have a quantity
+    product_id = objectfactory.String()  # all products will have an id
+    quantity = objectfactory.Integer( default=1 )  # all products will have a quantity
 
     def get_price( self ) -> float:
         """

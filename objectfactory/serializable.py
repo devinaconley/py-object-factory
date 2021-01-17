@@ -5,56 +5,14 @@ implements base abstract class, metaclass, and base field class for serializable
 """
 
 # lib
-from copy import deepcopy
+from abc import ABCMeta
+import marshmallow
+
+# src
+from .base import FieldABC, SerializableABC
 
 
-class Field( object ):
-    """
-    base class for serializable field
-
-    this is a class level descriptor for abstracting access to fields of
-    serializable objects
-    """
-
-    def __init__( self, default=None, name=None, field_type=None ):
-        self._name = name
-        self._key = None  # note: this will be set from parent metaclass __new__
-        self._default = default
-        self._field_type = field_type
-
-    def __get__( self, instance, owner ):
-        try:
-            return getattr( instance, self._key )
-        except AttributeError:
-            # lazily create copy of default
-            setattr( instance, self._key, deepcopy( self._default ) )
-            return getattr( instance, self._key )
-
-    def __set__( self, instance, value ):
-        setattr( instance, self._key, value )
-
-    def serialize_field( self, instance, deserializable=True ):
-        """
-        accessor to be called during serialization
-
-        :param instance:
-        :param deserializable:
-        :return:
-        """
-        return getattr( deepcopy( instance ), self._key, self._default )
-
-    def deserialize_field( self, instance, value ):
-        """
-        setter to be called during deserialization
-
-        :param instance:
-        :param value:
-        :return:
-        """
-        setattr( instance, self._key, deepcopy( value ) )
-
-
-class Meta( type ):
+class Meta( ABCMeta ):
     """
     metaclass for serializable classes
 
@@ -62,16 +20,17 @@ class Meta( type ):
     defining a new serializable class
     """
 
-    def __new__( mcs, name, bases, attributes ):
+    def __new__( mcs, name, bases, attributes, schema=None ):
         """
         collect and register all field descriptors for the new serializable object
 
         :param name:
         :param bases:
         :param attributes:
+        :param schema:
         :return:
         """
-        obj = type.__new__( mcs, name, bases, attributes )
+        obj = ABCMeta.__new__( mcs, name, bases, attributes )
 
         # init and collect serializable fields of parents
         fields = {}
@@ -79,27 +38,41 @@ class Meta( type ):
             fields.update( getattr( base, '_fields', {} ) )
 
         # populate with all serializable class descriptors
-        for name, attr in attributes.items():
-            if isinstance( attr, Field ):
-                if attr._name is None:
-                    attr._name = name
-                attr._key = '_' + attr._name  # define key that descriptor will use to access data
-                fields[name] = attr
+        for attr_name, attr in attributes.items():
+            if isinstance( attr, FieldABC ):
+                if attr._key is None:
+                    attr._key = attr_name
+                attr._attr_key = '_' + attr_name  # define key that descriptor will use to access data
+                fields[attr_name] = attr
 
+        # generate marshmallow schema
+        if schema is None:
+            marsh_fields = {
+                attr_name: attr.marshmallow()
+                for attr_name, attr in fields.items()
+            }
+            schema = marshmallow.Schema.from_dict(
+                marsh_fields,
+                name='_{}Schema'.format( name )
+            )
+
+        # set fields and schema
         setattr( obj, '_fields', fields )
+        setattr( obj, '_schema', schema )
         return obj
 
 
-class Serializable( object, metaclass=Meta ):
+class Serializable( SerializableABC, metaclass=Meta, schema=None ):
     """
     base abstract class for serializable objects
     """
-    _fields = {}
+    _fields = None
+    _schema = None
 
     @classmethod
     def from_kwargs( cls, **kwargs ):
         """
-        accept any fields as keyword args to constructor
+        constructor to accept any fields as keyword args
         """
         obj = cls()
         for key, val in kwargs.items():
@@ -108,35 +81,51 @@ class Serializable( object, metaclass=Meta ):
 
         return obj
 
-    def serialize( self, deserializable: bool = True, use_full_type: bool = True ) -> dict:
+    @classmethod
+    def from_dict( cls, body: dict ):
         """
-        serialize model to JSON
+        constructor to set data with dictionary
+        """
+        obj = cls()
+        for key, val in body.items():
+            if key in obj._fields:
+                obj._fields[key].__set__( obj, val )
 
-        :param deserializable: if true, type information will be included in body
+        return obj
+
+    def serialize( self, include_type: bool = True, use_full_type: bool = True ) -> dict:
+        """
+        serialize model to JSON dict
+
+        :param include_type: if true, type information will be included in body
         :param use_full_type: if true, the fully qualified path with be specified in body
         :return:
         :rtype dict
         """
-        body = {}
-        if deserializable:
+        self._serialize_kwargs = {
+            'include_type': include_type,
+            'use_full_type': use_full_type
+        }
+
+        body = self._schema().dump( self )
+        if include_type:
             if use_full_type:
                 body['_type'] = self.__class__.__module__ + '.' + self.__class__.__name__
             else:
                 body['_type'] = self.__class__.__name__
-
-        for _, attr in self._fields.items():
-            body[attr._name] = attr.serialize_field( self, deserializable=deserializable )
-
         return body
 
     def deserialize( self, body: dict ):
         """
-        deserialize model from JSON
+        deserialize model from JSON dict
 
         :param body:
         :return:
         """
-        for _, attr in self._fields.items():
-            if attr._name not in body:
-                continue  # accept default
-            attr.deserialize_field( self, body[attr._name] )
+        data = self._schema().load( body, unknown=marshmallow.EXCLUDE )
+        for name, attr in self._fields.items():
+            if attr._key not in body:
+                continue
+            if name not in data:
+                continue
+            setattr( self, name, data[name] )

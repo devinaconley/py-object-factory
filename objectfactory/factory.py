@@ -26,7 +26,6 @@ class Factory( object ):
         """
         register class with factory
 
-        :param name:
         :param serializable:
         :return:
         """
@@ -61,7 +60,8 @@ class Factory( object ):
             raise TypeError(
                 'Object type {} is not a {}'.format(
                     type( obj ).__name__,
-                    object_type.__name__ )
+                    object_type.__name__
+                )
             )
 
         obj.deserialize( body )

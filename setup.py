@@ -5,7 +5,7 @@ with open( 'README.md', 'r' ) as fh:
 
 setuptools.setup(
     name='objectfactory',
-    version='0.0.3',
+    version='0.1.0b',
     author='Devin A. Conley',
     author_email='devinaconley@gmail.com',
     description='A python package for the serializable model / factory pattern',
@@ -18,4 +18,7 @@ setuptools.setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
     ),
+    install_requires=[
+        'marshmallow~=3.0.0',
+    ]
 )
