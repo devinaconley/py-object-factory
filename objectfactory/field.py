@@ -35,9 +35,9 @@ class Field( FieldABC ):
 
     def marshmallow( self ):
         """
-        create generic marshmallow field
+        create generic marshmallow field to do actual serialization
 
-        :return:
+        :return: associated marshmallow field
         """
         return marshmallow.fields.Field(
             data_key=self._key,

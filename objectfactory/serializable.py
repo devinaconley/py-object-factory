@@ -72,7 +72,10 @@ class Serializable( SerializableABC, metaclass=Meta, schema=None ):
     @classmethod
     def from_kwargs( cls, **kwargs ):
         """
-        constructor to accept any fields as keyword args
+        constructor to set field data by keyword args
+
+        :param kwargs: keyword arguments by field
+        :return: new instance of serializable object
         """
         obj = cls()
         for key, val in kwargs.items():
@@ -85,6 +88,9 @@ class Serializable( SerializableABC, metaclass=Meta, schema=None ):
     def from_dict( cls, body: dict ):
         """
         constructor to set data with dictionary
+
+        :param body: dictionary
+        :return: new instance of serializable object
         """
         obj = cls()
         for key, val in body.items():
@@ -95,12 +101,11 @@ class Serializable( SerializableABC, metaclass=Meta, schema=None ):
 
     def serialize( self, include_type: bool = True, use_full_type: bool = True ) -> dict:
         """
-        serialize model to JSON dict
+        serialize model to dictionary
 
         :param include_type: if true, type information will be included in body
         :param use_full_type: if true, the fully qualified path with be specified in body
-        :return:
-        :rtype dict
+        :return: serialized object as dict
         """
         self._serialize_kwargs = {
             'include_type': include_type,
@@ -117,10 +122,9 @@ class Serializable( SerializableABC, metaclass=Meta, schema=None ):
 
     def deserialize( self, body: dict ):
         """
-        deserialize model from JSON dict
+        deserialize model from dictionary
 
-        :param body:
-        :return:
+        :param body: serialized data to load into object
         """
         data = self._schema().load( body, unknown=marshmallow.EXCLUDE )
         for name, attr in self._fields.items():

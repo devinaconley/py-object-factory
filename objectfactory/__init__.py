@@ -1,5 +1,7 @@
 """
-objectfactory
+objectfactory is a python package to easily implement the factory design pattern
+for object creation, serialization, and polymorphism
+
 """
 
 # do imports

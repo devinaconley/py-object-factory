@@ -24,7 +24,7 @@ dependencies:
     - codecov~=2.1.7
     - coverage~=5.2
     - idna
-    - marshmallow~=3.0.0
+    - marshmallow>=3,<4
     - more-itertools
     - pluggy
     - py
@@ -32,6 +32,9 @@ dependencies:
     - pytest-cov~=2.10.0
     - requests
     - six
+    - sphinx~=3.4.0
+    - sphinx-rtd-theme
+    - m2r2
     - urllib3
     - -e .
 prefix: /Users/devin/miniconda3/envs/py-object-factory
