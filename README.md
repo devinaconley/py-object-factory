@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/devinaconley/py-object-factory.svg?branch=develop)](https://travis-ci.org/devinaconley/py-object-factory)
 [![codecov](https://codecov.io/gh/devinaconley/py-object-factory/branch/develop/graph/badge.svg)](https://codecov.io/gh/devinaconley/py-object-factory)
+[![Documentation Status](https://readthedocs.org/projects/objectfactory/badge/?version=latest)](https://objectfactory.readthedocs.io/en/latest/?badge=latest)
+
 
 **objectfactory** is a python package to easily implement the factory design pattern for object creation, serialization, and polymorphism
 - designed to support polymorphism
