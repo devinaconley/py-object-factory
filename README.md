@@ -13,14 +13,14 @@ Simple **shapes** example:
 ```python
 import objectfactory
 
-@objectfactory.register_class
+@objectfactory.register
 class Square( objectfactory.Serializable ):
     side = objectfactory.Field()
 
     def get_area( self ):
         return self.side * self.side
 
-@objectfactory.register_class
+@objectfactory.register
 class Triangle( objectfactory.Serializable ):
     base = objectfactory.Field()
     height = objectfactory.Field()
@@ -35,7 +35,7 @@ serialized_data = [
 ]
 
 for data in serialized_data:
-    shape = objectfactory.create_object( data )
+    shape = objectfactory.create( data )
     print( 'class type: {}, shape area: {}'.format( type( shape ), shape.get_area() ) )
 
 ```

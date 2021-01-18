@@ -8,7 +8,7 @@ import marshmallow
 
 # src
 import objectfactory
-from objectfactory import Serializable, List, String, Integer, register_class
+from objectfactory import Serializable, List, String, Integer, register
 
 
 class TestPrimitiveList( object ):
@@ -158,7 +158,7 @@ class TestNestedList( object ):
         in json body of MyTestClass
         """
 
-        @register_class
+        @register
         class MyNestedClass( Serializable ):
             str_prop = String()
             int_prop = Integer()
@@ -198,7 +198,7 @@ class TestNestedList( object ):
         of MyNestedClass objects that is a member of MyTestClass
         """
 
-        @register_class
+        @register
         class MyNestedClass( Serializable ):
             str_prop = String()
             int_prop = Integer()
@@ -244,7 +244,7 @@ class TestNestedList( object ):
         _type field specified
         """
 
-        @register_class
+        @register
         class MyNestedClass( Serializable ):
             str_prop = String()
             int_prop = Integer()
@@ -287,11 +287,11 @@ class TestNestedList( object ):
         expect validation error to be raised on invalid nested object type
         """
 
-        @register_class
+        @register
         class MyNestedClass( Serializable ):
             str_prop = String()
 
-        @register_class
+        @register
         class OtherClass( Serializable ):
             str_prop = String()
 
@@ -322,7 +322,7 @@ class TestNestedList( object ):
         of the parent class, to avoid unintentional memory sharing
         """
 
-        @register_class
+        @register
         class MyNestedClass( Serializable ):
             str_prop = String()
             int_prop = Integer()

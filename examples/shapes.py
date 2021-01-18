@@ -16,11 +16,11 @@ def main():
 
     # load each shape, printing object type and area
     for data in serialized_data:
-        shape = objectfactory.create_object( data )
+        shape = objectfactory.create( data )
         print( 'class type: {}, shape area: {}'.format( type( shape ), shape.get_area() ) )
 
 
-@objectfactory.register_class
+@objectfactory.register
 class Square( objectfactory.Serializable ):
     """
     serializable square class
@@ -36,7 +36,7 @@ class Square( objectfactory.Serializable ):
         return self.side * self.side
 
 
-@objectfactory.register_class
+@objectfactory.register
 class Triangle( objectfactory.Serializable ):
     """
     serializable triangle class

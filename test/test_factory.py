@@ -36,7 +36,7 @@ class TestFactory( object ):
             'str_prop': 'somestring',
             'int_prop': 42,
         }
-        obj = objectfactory.create_object( body )
+        obj = objectfactory.create( body )
 
         assert isinstance( obj, MyBasicClass )
         assert obj.str_prop == 'somestring'
@@ -53,7 +53,7 @@ class TestFactory( object ):
             'str_prop': 'somestring',
             'int_prop': 42,
         }
-        obj = objectfactory.create_object( body )
+        obj = objectfactory.create( body )
 
         assert isinstance( obj, MyBasicClass )
         assert obj.str_prop == 'somestring'
@@ -70,7 +70,7 @@ class TestFactory( object ):
             'str_prop': 'somestring',
             'int_prop': 42,
         }
-        obj = objectfactory.create_object( body )
+        obj = objectfactory.create( body )
 
         assert isinstance( obj, MyBasicClass )
         assert obj.str_prop == 'somestring'
@@ -88,7 +88,7 @@ class TestFactory( object ):
             'int_prop': 42,
         }
         with pytest.raises( ValueError, match=r'.*type MyClassThatDoesNotExist not found.*' ):
-            _ = objectfactory.create_object( body )
+            _ = objectfactory.create( body )
 
     def test_create_object_typed( self ):
         """
@@ -101,7 +101,7 @@ class TestFactory( object ):
             'str_prop': 'somestring',
             'int_prop': 42,
         }
-        obj = objectfactory.create_object( body, object_type=MyBasicClass )
+        obj = objectfactory.create( body, object_type=MyBasicClass )
 
         assert isinstance( obj, MyBasicClass )
         assert obj.str_prop == 'somestring'
@@ -122,4 +122,4 @@ class TestFactory( object ):
                 TypeError,
                 match=r'.*Object type MyBasicClass is not a MyComplexClass.*'
         ):
-            _ = objectfactory.create_object( body, object_type=MyComplexClass )
+            _ = objectfactory.create( body, object_type=MyComplexClass )

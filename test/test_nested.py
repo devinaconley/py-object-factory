@@ -8,7 +8,7 @@ import marshmallow
 
 # src
 import objectfactory
-from objectfactory import Serializable, Nested, String, register_class
+from objectfactory import Serializable, Nested, String, register
 from objectfactory.nested import NestedFactoryField
 
 
@@ -78,7 +78,7 @@ class TestNested( object ):
         expect nested object to be created and data to be loaded
         """
 
-        @register_class
+        @register
         class MyNestedClass( Serializable ):
             str_prop = String()
 
@@ -136,11 +136,11 @@ class TestNested( object ):
         field is of the incorrect type
         """
 
-        @register_class
+        @register
         class MyNestedClass( Serializable ):
             str_prop = String()
 
-        @register_class
+        @register
         class OtherClass( Serializable ):
             str_prop = String()
 

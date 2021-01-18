@@ -10,7 +10,7 @@ import marshmallow
 
 # src
 from .base import FieldABC, SerializableABC
-from .factory import create_object
+from .factory import create
 from .nested import NestedFactoryField
 
 

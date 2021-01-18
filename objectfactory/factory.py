@@ -22,7 +22,7 @@ class Factory( object ):
         self.name = name
         self.registry = {}
 
-    def register_class( self, serializable: Serializable ):
+    def register( self, serializable: Serializable ):
         """
         register class with factory
 
@@ -33,7 +33,7 @@ class Factory( object ):
         self.registry[serializable.__name__] = serializable
         return serializable
 
-    def create_object( self, body: dict, object_type: Type[T] = Serializable ) -> T:
+    def create( self, body: dict, object_type: Type[T] = Serializable ) -> T:
         """
         create object from JSON dictionary
 
@@ -72,7 +72,7 @@ class Factory( object ):
 _global_factory = Factory( 'global' )
 
 
-def create_object( body: dict, object_type: Type[T] = Serializable ) -> T:
+def create( body: dict, object_type: Type[T] = Serializable ) -> T:
     """
     create object from the global factory
 
@@ -80,14 +80,14 @@ def create_object( body: dict, object_type: Type[T] = Serializable ) -> T:
     :param object_type:
     :return:
     """
-    return _global_factory.create_object( body, object_type=object_type )
+    return _global_factory.create( body, object_type=object_type )
 
 
-def register_class( serializable: Serializable ):
+def register( serializable: Serializable ):
     """
     register class with the global factory
 
     :param serializable:
     :return:
     """
-    return _global_factory.register_class( serializable )
+    return _global_factory.register( serializable )

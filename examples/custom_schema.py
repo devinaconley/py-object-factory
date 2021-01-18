@@ -36,7 +36,7 @@ def main():
     # load and validate each contact
     for c in contacts:
         try:
-            contact = objectfactory.create_object( c, object_type=Contact )
+            contact = objectfactory.create( c, object_type=Contact )
             print(
                 'Loaded contact for: {} {}, number: {}, email: {}'.format(
                     contact.first_name,
@@ -77,7 +77,7 @@ class ContactSchema( marshmallow.Schema ):
     phone_number = PhoneNumber()
 
 
-@objectfactory.register_class
+@objectfactory.register
 class Contact( objectfactory.Serializable, schema=ContactSchema ):
     """
     product order from a dollar store vendor

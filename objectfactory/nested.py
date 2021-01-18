@@ -9,7 +9,7 @@ import marshmallow
 
 # src
 from .serializable import Serializable
-from .factory import create_object
+from .factory import create
 
 
 class NestedFactoryField( marshmallow.fields.Field ):
@@ -46,7 +46,7 @@ class NestedFactoryField( marshmallow.fields.Field ):
             return
 
         if '_type' in value:
-            obj = create_object( value )
+            obj = create( value )
             if self._field_type and not isinstance( obj, self._field_type ):
                 raise ValueError(
                     '{} is not an instance of type: {}'.format(

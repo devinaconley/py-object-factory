@@ -26,7 +26,7 @@ def main():
     ]
 
     # deserialize raw product order
-    products = [objectfactory.create_object( order, object_type=Product ) for order in raw_orders]
+    products = [objectfactory.create( order, object_type=Product ) for order in raw_orders]
 
     # calculate overall price
     price = sum( [prod.get_price() * prod.quantity for prod in products] )
@@ -73,7 +73,7 @@ class Product( objectfactory.Serializable ):
         raise NotImplementedError( 'get_quantity_in_stock method is required' )
 
 
-@objectfactory.register_class
+@objectfactory.register
 class DollarStoreProduct( Product ):
     """
     product order from a dollar store vendor
@@ -108,7 +108,7 @@ class DollarStoreProduct( Product ):
         }.get( self.product_id, 0 )
 
 
-@objectfactory.register_class
+@objectfactory.register
 class EcommerceGiantProduct( Product ):
     """
     product order from an e-commerce giant
