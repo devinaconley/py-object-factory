@@ -132,3 +132,43 @@ class TestFieldOptionals( object ):
         obj = MyTestClass()
         with pytest.raises( marshmallow.exceptions.ValidationError ):
             obj.deserialize( body )
+
+    def test_deserialize_null( self ):
+        """
+        test deserialization validation
+
+        expect null to be deserialized to None
+        """
+
+        class MyTestClass( Serializable ):
+            prop = Field()
+
+        body = {
+            '_type': 'MyTestClass',
+            'prop': None
+        }
+
+        obj = MyTestClass()
+        obj.deserialize( body )
+
+        assert isinstance( obj, MyTestClass )
+        assert obj.prop is None
+
+    def test_deserialize_null_disallowed( self ):
+        """
+        test deserialization validation
+
+        expect exception to be thrown when null value is not allowed
+        """
+
+        class MyTestClass( Serializable ):
+            prop = Field( allow_none=False )
+
+        body = {
+            '_type': 'MyTestClass',
+            'prop': None
+        }
+
+        obj = MyTestClass()
+        with pytest.raises( marshmallow.exceptions.ValidationError ):
+            obj.deserialize( body )

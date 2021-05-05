@@ -76,6 +76,7 @@ class TestString( object ):
         obj.deserialize( body )
 
         assert isinstance( obj, MyTestClass )
+        assert type( obj.str_prop ) == str
         assert obj.str_prop == 'another string'
 
     def test_deserialize_invalid( self ):

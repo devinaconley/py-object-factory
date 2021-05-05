@@ -12,18 +12,20 @@ class FieldABC( ABC ):
     abstract base class for serializable field
     """
 
-    def __init__( self, default=None, key=None, required=False ):
+    def __init__( self, default=None, key=None, required=False, allow_none=True ):
         """
         constructor for serializable field
 
         :param default: default value for field if unset
         :param key: dictionary key to use for field serialization
         :param required: whether this field is required to deserialize an object
+        :param allow_none: whether null should be considered a valid value
         """
         self._key = key
         self._attr_key = None  # note: this will be set from parent metaclass __new__
         self._default = default
         self._required = required
+        self._allow_none = allow_none
 
     @abstractmethod
     def __get__( self, instance, owner ):

@@ -42,7 +42,8 @@ class Field( FieldABC ):
         return marshmallow.fields.Field(
             data_key=self._key,
             default=self._default,
-            required=self._required
+            required=self._required,
+            allow_none=self._allow_none
         )
 
 
@@ -55,7 +56,8 @@ class Integer( Field ):
         return marshmallow.fields.Integer(
             data_key=self._key,
             default=self._default,
-            required=self._required
+            required=self._required,
+            allow_none=self._allow_none
         )
 
 
@@ -68,7 +70,8 @@ class String( Field ):
         return marshmallow.fields.String(
             data_key=self._key,
             default=self._default,
-            required=self._required
+            required=self._required,
+            allow_none=self._allow_none
         )
 
 
@@ -81,7 +84,8 @@ class Boolean( Field ):
         return marshmallow.fields.Boolean(
             data_key=self._key,
             default=self._default,
-            required=self._required
+            required=self._required,
+            allow_none=self._allow_none
         )
 
 
@@ -94,7 +98,8 @@ class Float( Field ):
         return marshmallow.fields.Float(
             data_key=self._key,
             default=self._default,
-            required=self._required
+            required=self._required,
+            allow_none=self._allow_none
         )
 
 
@@ -103,8 +108,15 @@ class Nested( Field ):
     field type for nested serializable object
     """
 
-    def __init__( self, default=None, key=None, field_type=None, required=False ):
-        super().__init__( default=default, key=key, required=required )
+    def __init__(
+            self,
+            default=None,
+            key=None,
+            field_type=None,
+            required=False,
+            allow_none=True
+    ):
+        super().__init__( default=default, key=key, required=required, allow_none=allow_none )
         self._field_type = field_type
 
     def marshmallow( self ):
@@ -112,7 +124,8 @@ class Nested( Field ):
             field_type=self._field_type,
             data_key=self._key,
             default=self._default,
-            required=self._required
+            required=self._required,
+            allow_none=self._allow_none
         )
 
 
@@ -121,10 +134,17 @@ class List( Field ):
     field type for list of serializable objects
     """
 
-    def __init__( self, default=None, key=None, field_type=None, required=False ):
+    def __init__(
+            self,
+            default=None,
+            key=None,
+            field_type=None,
+            required=False,
+            allow_none=True
+    ):
         if default is None:
             default = []
-        super().__init__( default=default, key=key, required=required )
+        super().__init__( default=default, key=key, required=required, allow_none=allow_none )
         self._field_type = field_type
 
     def marshmallow( self ):
@@ -137,4 +157,9 @@ class List( Field ):
         else:
             raise ValueError( 'Invalid field type in List: {}'.format( self._field_type ) )
 
-        return marshmallow.fields.List( cls, data_key=self._key, required=self._required )
+        return marshmallow.fields.List(
+            cls,
+            data_key=self._key,
+            required=self._required,
+            allow_none=self._allow_none
+        )
