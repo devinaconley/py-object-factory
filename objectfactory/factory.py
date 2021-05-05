@@ -35,7 +35,7 @@ class Factory( object ):
 
     def create( self, body: dict, object_type: Type[T] = Serializable ) -> T:
         """
-        create object from JSON dictionary
+        create object from dictionary
 
         :param body:
         :param object_type:

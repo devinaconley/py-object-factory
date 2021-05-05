@@ -93,9 +93,7 @@ class Serializable( SerializableABC, metaclass=Meta, schema=None ):
         :return: new instance of serializable object
         """
         obj = cls()
-        for key, val in body.items():
-            if key in obj._fields:
-                obj._fields[key].__set__( obj, val )
+        obj.deserialize( body )
 
         return obj
 

@@ -65,11 +65,27 @@ class TestSerializableObject( object ):
         """
         test initializing class with keywords based on fields
 
-        expect any fields to passable as a keyword arg to init
+        expect any fields to pass through as a keyword arg to init
         """
         obj = MyBasicClass.from_kwargs(
             str_prop='some string',
             int_prop=12
+        )
+
+        assert obj.str_prop == 'some string'
+        assert obj.int_prop == 12
+
+    def test_init_dictionary( self ):
+        """
+        test initializing class with dictionary
+
+        expect any dictionary data fields to pass through to init
+        """
+        obj = MyBasicClass.from_dict(
+            {
+                'str_prop': 'some string',
+                'int_prop': 12
+            }
         )
 
         assert obj.str_prop == 'some string'
