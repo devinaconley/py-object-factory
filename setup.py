@@ -5,10 +5,10 @@ with open( 'README.md', 'r' ) as fh:
 
 setuptools.setup(
     name='objectfactory',
-    version='0.1.0b1',
+    version='0.1.0',
     author='Devin A. Conley',
     author_email='devinaconley@gmail.com',
-    description='A python package for the serializable model / factory pattern',
+    description='objectfactory is a python package to easily implement the factory design pattern for object creation, serialization, and polymorphism',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/devinaconley/py-object-factory',

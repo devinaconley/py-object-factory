@@ -42,8 +42,8 @@ serialized_data = [
 for data in serialized_data:
     shape = objectfactory.create( data )
     print( 'class type: {}, shape area: {}'.format( type( shape ), shape.get_area() ) )
-
 ```
+
 Output:
 ```
 class type: <class '__main__.Square'>, shape area: 4.0
@@ -51,10 +51,14 @@ class type: <class '__main__.Triangle'>, shape area: 2.1875
 class type: <class '__main__.Square'>, shape area: 2.25
 ```
 
-See more examples [here](examples)
+### More examples
+See more advanced examples [here](examples)
 
 ## Install
 Use [pip](https://pip.pypa.io/en/stable/installing/) for installation
 ```
 pip install objectfactory
 ```
+
+## Documentation
+Read the full documentation at [objectfactory.readthedocs.io](https://objectfactory.readthedocs.io/)
