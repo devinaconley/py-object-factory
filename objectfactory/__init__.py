@@ -1,9 +1,12 @@
 """
-objectfactory
+objectfactory is a python package to easily implement the factory design pattern
+for object creation, serialization, and polymorphism
+
 """
 
-from .serializable import Serializable, Field
-from .factory import Factory
-from .field import Nested, List
+# do imports
+from .serializable import Serializable
+from .factory import Factory, register, create
+from .field import Field, Nested, List, Integer, String, Boolean, Float
 
-__version__ = '0.0.3'
+__version__ = '0.1.0b'
