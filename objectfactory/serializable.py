@@ -1,7 +1,7 @@
 """
 serializable module
 
-implements base abstract class, metaclass, and base field class for serializable objects
+implements base class and metaclass for serializable objects
 """
 
 # lib
@@ -22,13 +22,14 @@ class Meta( ABCMeta ):
 
     def __new__( mcs, name, bases, attributes, schema=None ):
         """
-        collect and register all field descriptors for the new serializable object
+        define a new serializable object class, collect and register all field descriptors,
+        construct marshmallow schema
 
-        :param name:
-        :param bases:
-        :param attributes:
-        :param schema:
-        :return:
+        :param name: class name
+        :param bases: list of base classes to inherit from
+        :param attributes: dictionary of class attributes
+        :param schema: (optional) predefined marshmallow schema
+        :return: newly defined class
         """
         obj = ABCMeta.__new__( mcs, name, bases, attributes )
 
@@ -64,7 +65,7 @@ class Meta( ABCMeta ):
 
 class Serializable( SerializableABC, metaclass=Meta, schema=None ):
     """
-    base abstract class for serializable objects
+    base class for serializable objects
     """
     _fields = None
     _schema = None
@@ -98,13 +99,6 @@ class Serializable( SerializableABC, metaclass=Meta, schema=None ):
         return obj
 
     def serialize( self, include_type: bool = True, use_full_type: bool = True ) -> dict:
-        """
-        serialize model to dictionary
-
-        :param include_type: if true, type information will be included in body
-        :param use_full_type: if true, the fully qualified path with be specified in body
-        :return: serialized object as dict
-        """
         self._serialize_kwargs = {
             'include_type': include_type,
             'use_full_type': use_full_type
@@ -119,11 +113,6 @@ class Serializable( SerializableABC, metaclass=Meta, schema=None ):
         return body
 
     def deserialize( self, body: dict ):
-        """
-        deserialize model from dictionary
-
-        :param body: serialized data to load into object
-        """
         data = self._schema().load( body, unknown=marshmallow.EXCLUDE )
         for name, attr in self._fields.items():
             if attr._key not in body:

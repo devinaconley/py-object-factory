@@ -1,16 +1,15 @@
-Welcome to objectfactory's documentation!
-=========================================
+objectfactory
+===============================================
+
+.. mdinclude:: ../../README.md
+    :start-line: 2
+    :end-line: 15
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   readme
-   modules
-
-Indices and tables
-==================
+   quickstart
+   objectfactory
 
 * :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

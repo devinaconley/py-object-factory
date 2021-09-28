@@ -1,18 +1,12 @@
-objectfactory package
+objectfactory
 =====================
-
-Module contents
----------------
 
 .. automodule:: objectfactory
    :members:
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
-
-objectfactory.base module
+objectfactory.base
 -------------------------
 
 .. automodule:: objectfactory.base
@@ -20,7 +14,7 @@ objectfactory.base module
    :undoc-members:
    :show-inheritance:
 
-objectfactory.factory module
+objectfactory.factory
 ----------------------------
 
 .. automodule:: objectfactory.factory
@@ -28,7 +22,7 @@ objectfactory.factory module
    :undoc-members:
    :show-inheritance:
 
-objectfactory.field module
+objectfactory.field
 --------------------------
 
 .. automodule:: objectfactory.field
@@ -36,15 +30,7 @@ objectfactory.field module
    :undoc-members:
    :show-inheritance:
 
-objectfactory.nested module
----------------------------
-
-.. automodule:: objectfactory.nested
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-objectfactory.serializable module
+objectfactory.serializable
 ---------------------------------
 
 .. automodule:: objectfactory.serializable

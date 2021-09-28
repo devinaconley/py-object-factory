@@ -9,9 +9,9 @@
 - designed to support polymorphism
 - integrates seamlessly with [marshmallow](https://github.com/marshmallow-code/marshmallow)
   and other serialization frameworks
-- serialization schema inherent in class definition
-- consistent interface to load many objects of arbitrary type
-- serialize object to human-readable JSON format
+- schema inherent in class definition
+- load any object with a generic interface
+- serialize objects to JSON
 
 ## Example 
 Simple **shapes** example:

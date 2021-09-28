@@ -34,11 +34,6 @@ class Field( FieldABC ):
         setattr( instance, self._attr_key, value )
 
     def marshmallow( self ):
-        """
-        create generic marshmallow field to do actual serialization
-
-        :return: associated marshmallow field
-        """
         return marshmallow.fields.Field(
             data_key=self._key,
             default=self._default,
@@ -116,6 +111,13 @@ class Nested( Field ):
             required=False,
             allow_none=True
     ):
+        """
+        :param default: default value for field if unset
+        :param key: dictionary key to use for field serialization
+        :param field_type: specified type for nested object
+        :param required: whether this field is required to deserialize an object
+        :param allow_none: whether null should be considered a valid value
+        """
         super().__init__( default=default, key=key, required=required, allow_none=allow_none )
         self._field_type = field_type
 
@@ -142,6 +144,13 @@ class List( Field ):
             required=False,
             allow_none=True
     ):
+        """
+        :param default: default value for field if unset
+        :param key: dictionary key to use for field serialization
+        :param field_type: specified type for list of nested objects
+        :param required: whether this field is required to deserialize an object
+        :param allow_none: whether null should be considered a valid value
+        """
         if default is None:
             default = []
         super().__init__( default=default, key=key, required=required, allow_none=allow_none )
