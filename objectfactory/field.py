@@ -36,7 +36,6 @@ class Field( FieldABC ):
     def marshmallow( self ):
         return marshmallow.fields.Field(
             data_key=self._key,
-            default=self._default,
             required=self._required,
             allow_none=self._allow_none
         )
@@ -50,7 +49,6 @@ class Integer( Field ):
     def marshmallow( self ):
         return marshmallow.fields.Integer(
             data_key=self._key,
-            default=self._default,
             required=self._required,
             allow_none=self._allow_none
         )
@@ -64,7 +62,6 @@ class String( Field ):
     def marshmallow( self ):
         return marshmallow.fields.String(
             data_key=self._key,
-            default=self._default,
             required=self._required,
             allow_none=self._allow_none
         )
@@ -78,7 +75,6 @@ class Boolean( Field ):
     def marshmallow( self ):
         return marshmallow.fields.Boolean(
             data_key=self._key,
-            default=self._default,
             required=self._required,
             allow_none=self._allow_none
         )
@@ -92,7 +88,6 @@ class Float( Field ):
     def marshmallow( self ):
         return marshmallow.fields.Float(
             data_key=self._key,
-            default=self._default,
             required=self._required,
             allow_none=self._allow_none
         )
@@ -125,7 +120,6 @@ class Nested( Field ):
         return NestedFactoryField(
             field_type=self._field_type,
             data_key=self._key,
-            default=self._default,
             required=self._required,
             allow_none=self._allow_none
         )
