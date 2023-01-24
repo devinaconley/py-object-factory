@@ -7,7 +7,7 @@ from objectfactory import register, Serializable, Field, Nested, List
 
 
 @register
-class MyBasicClass( Serializable ):
+class MyBasicClass(Serializable):
     """
     basic class to be used for testing serialization
     """
@@ -16,7 +16,7 @@ class MyBasicClass( Serializable ):
 
 
 @register
-class MySubClass( MyBasicClass ):
+class MySubClass(MyBasicClass):
     """
     sub class to be used for testing inheritance and serialization
     """
@@ -25,9 +25,9 @@ class MySubClass( MyBasicClass ):
 
 
 @register
-class MyComplexClass( Serializable ):
+class MyComplexClass(Serializable):
     """
     complex class to test hierarchical serialization
     """
-    nested = Nested( MyBasicClass )
+    nested = Nested(MyBasicClass)
     prop = Field()

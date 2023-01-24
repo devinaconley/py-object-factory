@@ -10,12 +10,12 @@ import marshmallow
 from objectfactory import Serializable, String
 
 
-class TestString( object ):
+class TestString(object):
     """
     test case for string field type
     """
 
-    def test_definition( self ):
+    def test_definition(self):
         """
         test definition of class with string field
 
@@ -23,30 +23,30 @@ class TestString( object ):
         in schema creation
         """
 
-        class MyTestClass( Serializable ):
+        class MyTestClass(Serializable):
             str_prop = String()
 
-        assert isinstance( MyTestClass._fields, dict )
-        assert len( MyTestClass._fields ) == 1
+        assert isinstance(MyTestClass._fields, dict)
+        assert len(MyTestClass._fields) == 1
         assert 'str_prop' in MyTestClass._fields
-        assert isinstance( MyTestClass._fields['str_prop'], String )
+        assert isinstance(MyTestClass._fields['str_prop'], String)
 
         schema = MyTestClass._schema
-        assert issubclass( schema, marshmallow.Schema )
-        assert len( schema._declared_fields ) == 1
+        assert issubclass(schema, marshmallow.Schema)
+        assert len(schema._declared_fields) == 1
         assert 'str_prop' in schema._declared_fields
 
         prop = schema._declared_fields['str_prop']
-        assert isinstance( prop, marshmallow.fields.String )
+        assert isinstance(prop, marshmallow.fields.String)
 
-    def test_serialize( self ):
+    def test_serialize(self):
         """
         test serialize
 
         expect string data to be dumped to json body
         """
 
-        class MyTestClass( Serializable ):
+        class MyTestClass(Serializable):
             str_prop = String()
 
         obj = MyTestClass()
@@ -57,14 +57,14 @@ class TestString( object ):
         assert body['_type'] == 'test.test_string.MyTestClass'
         assert body['str_prop'] == 'some string'
 
-    def test_deserialize( self ):
+    def test_deserialize(self):
         """
         test deserialization
 
         expect string data to be loaded into class
         """
 
-        class MyTestClass( Serializable ):
+        class MyTestClass(Serializable):
             str_prop = String()
 
         body = {
@@ -73,20 +73,20 @@ class TestString( object ):
         }
 
         obj = MyTestClass()
-        obj.deserialize( body )
+        obj.deserialize(body)
 
-        assert isinstance( obj, MyTestClass )
-        assert type( obj.str_prop ) == str
+        assert isinstance(obj, MyTestClass)
+        assert type(obj.str_prop) == str
         assert obj.str_prop == 'another string'
 
-    def test_deserialize_invalid( self ):
+    def test_deserialize_invalid(self):
         """
         test deserialization validation
 
         expect validation error to be raised on invalid string data
         """
 
-        class MyTestClass( Serializable ):
+        class MyTestClass(Serializable):
             str_prop = String()
 
         body = {
@@ -95,5 +95,5 @@ class TestString( object ):
         }
 
         obj = MyTestClass()
-        with pytest.raises( marshmallow.ValidationError ):
-            obj.deserialize( body )
+        with pytest.raises(marshmallow.ValidationError):
+            obj.deserialize(body)

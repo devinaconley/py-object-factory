@@ -26,60 +26,60 @@ def main():
     ]
 
     # deserialize raw product order
-    products = [objectfactory.create( order, object_type=Product ) for order in raw_orders]
+    products = [objectfactory.create(order, object_type=Product) for order in raw_orders]
 
     # calculate overall price
-    price = sum( [prod.get_price() * prod.quantity for prod in products] )
-    print( 'Overall order price: ${}'.format( price ) )
+    price = sum([prod.get_price() * prod.quantity for prod in products])
+    print('Overall order price: ${}'.format(price))
 
     # estimate delivery
-    days = max( [prod.get_delivery_time() for prod in products] )
-    print( 'Estimated delivery time is: {} days'.format( days ) )
+    days = max([prod.get_delivery_time() for prod in products])
+    print('Estimated delivery time is: {} days'.format(days))
 
     # validate stocking
-    in_stock = all( [prod.quantity < prod.get_quantity_in_stock() for prod in products] )
-    print( 'Products are {}stocked'.format( '' if in_stock else 'not ' ) )
+    in_stock = all([prod.quantity < prod.get_quantity_in_stock() for prod in products])
+    print('Products are {}stocked'.format('' if in_stock else 'not '))
 
 
-class Product( objectfactory.Serializable ):
+class Product(objectfactory.Serializable):
     """
     base abstract class for our products
     """
     product_id = objectfactory.String()  # all products will have an id
-    quantity = objectfactory.Integer( default=1 )  # all products will have a quantity
+    quantity = objectfactory.Integer(default=1)  # all products will have a quantity
 
-    def get_price( self ) -> float:
+    def get_price(self) -> float:
         """
         abstract method to calculate price and return
 
         :return: float
         """
-        raise NotImplementedError( 'get_price method is required' )
+        raise NotImplementedError('get_price method is required')
 
-    def get_delivery_time( self ) -> int:
+    def get_delivery_time(self) -> int:
         """
         abstract method to get required delivery time
 
         :return:
         """
-        raise NotImplementedError( 'get_delivery_time method is required' )
+        raise NotImplementedError('get_delivery_time method is required')
 
-    def get_quantity_in_stock( self ) -> int:
+    def get_quantity_in_stock(self) -> int:
         """
         abstract method to get quantity in stock
 
         :return:
         """
-        raise NotImplementedError( 'get_quantity_in_stock method is required' )
+        raise NotImplementedError('get_quantity_in_stock method is required')
 
 
 @objectfactory.register
-class DollarStoreProduct( Product ):
+class DollarStoreProduct(Product):
     """
     product order from a dollar store vendor
     """
 
-    def get_price( self ) -> float:
+    def get_price(self) -> float:
         """
         everything is a dollar!!!!
 
@@ -87,7 +87,7 @@ class DollarStoreProduct( Product ):
         """
         return 1.00
 
-    def get_delivery_time( self ) -> int:
+    def get_delivery_time(self) -> int:
         """
         everything takes about a week to ship
 
@@ -95,7 +95,7 @@ class DollarStoreProduct( Product ):
         """
         return 7
 
-    def get_quantity_in_stock( self ) -> int:
+    def get_quantity_in_stock(self) -> int:
         """
         mock connection to this vendor's supply data
 
@@ -105,16 +105,16 @@ class DollarStoreProduct( Product ):
             'greeting_card': 300,
             'candle': 15,
             'glass_vase': 10
-        }.get( self.product_id, 0 )
+        }.get(self.product_id, 0)
 
 
 @objectfactory.register
-class EcommerceGiantProduct( Product ):
+class EcommerceGiantProduct(Product):
     """
     product order from an e-commerce giant
     """
 
-    def get_price( self ) -> float:
+    def get_price(self) -> float:
         """
         mock connection to this vendor's pricing data
 
@@ -125,9 +125,9 @@ class EcommerceGiantProduct( Product ):
             'tv': 450,
             'digital_clock': 10,
             'virtual_assistant': 50
-        }.get( self.product_id, None )
+        }.get(self.product_id, None)
 
-    def get_delivery_time( self ) -> int:
+    def get_delivery_time(self) -> int:
         """
         guaranteed 2-day delivery
 
@@ -135,7 +135,7 @@ class EcommerceGiantProduct( Product ):
         """
         return 2
 
-    def get_quantity_in_stock( self ) -> int:
+    def get_quantity_in_stock(self) -> int:
         """
         infinite supplies
 

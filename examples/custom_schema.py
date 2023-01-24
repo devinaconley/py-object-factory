@@ -36,7 +36,7 @@ def main():
     # load and validate each contact
     for c in contacts:
         try:
-            contact = objectfactory.create( c, object_type=Contact )
+            contact = objectfactory.create(c, object_type=Contact)
             print(
                 'Loaded contact for: {} {}, number: {}, email: {}'.format(
                     contact.first_name,
@@ -46,29 +46,29 @@ def main():
                 )
             )
         except marshmallow.ValidationError as e:
-            print( 'Validation error: {}'.format( e ) )
+            print('Validation error: {}'.format(e))
 
 
-class PhoneNumber( marshmallow.fields.Field ):
+class PhoneNumber(marshmallow.fields.Field):
     """Custom marshmallow field to validate phone number"""
 
-    def _deserialize( self, value, *args, **kwargs ):
+    def _deserialize(self, value, *args, **kwargs):
         try:
-            x = value.split( '-' )
-            assert len( x ) == 3
-            assert len( x[0] ) == 3
-            assert len( x[1] ) == 3
-            assert len( x[2] ) == 4
-            return str( value )
+            x = value.split('-')
+            assert len(x) == 3
+            assert len(x[0]) == 3
+            assert len(x[1]) == 3
+            assert len(x[2]) == 4
+            return str(value)
 
         except AssertionError as e:
-            raise marshmallow.ValidationError( 'Invalid phone number' )
+            raise marshmallow.ValidationError('Invalid phone number')
 
-    def _serialize( self, value, *args, **kwargs ):
-        return str( value )
+    def _serialize(self, value, *args, **kwargs):
+        return str(value)
 
 
-class ContactSchema( marshmallow.Schema ):
+class ContactSchema(marshmallow.Schema):
     """Custom marshmallow schema for contact info"""
 
     first_name = marshmallow.fields.Str()
@@ -78,7 +78,7 @@ class ContactSchema( marshmallow.Schema ):
 
 
 @objectfactory.register
-class Contact( objectfactory.Serializable, schema=ContactSchema ):
+class Contact(objectfactory.Serializable, schema=ContactSchema):
     """
     product order from a dollar store vendor
     """

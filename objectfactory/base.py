@@ -7,12 +7,12 @@ implements abstract base classes for objectfactory
 from abc import ABC, abstractmethod
 
 
-class FieldABC( ABC ):
+class FieldABC(ABC):
     """
     abstract base class for serializable field
     """
 
-    def __init__( self, default=None, key=None, required=False, allow_none=True ):
+    def __init__(self, default=None, key=None, required=False, allow_none=True):
         """
         :param default: default value for field if unset
         :param key: dictionary key to use for field serialization
@@ -26,15 +26,15 @@ class FieldABC( ABC ):
         self._allow_none = allow_none
 
     @abstractmethod
-    def __get__( self, instance, owner ):
+    def __get__(self, instance, owner):
         pass
 
     @abstractmethod
-    def __set__( self, instance, value ):
+    def __set__(self, instance, value):
         pass
 
     @abstractmethod
-    def marshmallow( self ):
+    def marshmallow(self):
         """
         create generic marshmallow field to do actual serialization
 
@@ -43,13 +43,13 @@ class FieldABC( ABC ):
         pass
 
 
-class SerializableABC( ABC ):
+class SerializableABC(ABC):
     """
     abstract base class for serializable object
     """
 
     @abstractmethod
-    def serialize( self, include_type: bool = True, use_full_type: bool = True ) -> dict:
+    def serialize(self, include_type: bool = True, use_full_type: bool = True) -> dict:
         """
         serialize model to dictionary
 
@@ -60,7 +60,7 @@ class SerializableABC( ABC ):
         pass
 
     @abstractmethod
-    def deserialize( self, body: dict ):
+    def deserialize(self, body: dict):
         """
         deserialize model from dictionary
 
