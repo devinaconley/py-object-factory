@@ -158,3 +158,59 @@ class TestNested(object):
         obj = MyTestClass()
         with pytest.raises(ValueError):
             obj.deserialize(body)
+
+    def test_serialize_nested_optional(self):
+        """
+        test serialize with nested optional
+
+        expect nested object to be dumped to nested dict under specified key
+        """
+
+        class MyNestedClass(Serializable):
+            str_prop = String(key='string_property')
+
+        class MyTestClass(Serializable):
+            nested = Nested()
+
+        obj = MyTestClass()
+        obj.nested = MyNestedClass()
+        obj.nested.str_prop = 'some string'
+
+        body = obj.serialize()
+
+        assert body['_type'] == 'test.test_nested.MyTestClass'
+        assert isinstance(body['nested'], dict)
+        assert body['nested']['_type'] == 'test.test_nested.MyNestedClass'
+        assert 'str_prop' not in body['nested']
+        assert body['nested']['string_property'] == 'some string'
+
+    def test_deserialize_nested_optional(self):
+        """
+        test deserialization with nested optional
+
+        expect nested object to be created and data to be loaded from specified key
+        """
+
+        @register
+        class MyNestedClass(Serializable):
+            str_prop = String(key='string_property')
+
+        class MyTestClass(Serializable):
+            nested = Nested()
+
+        body = {
+            '_type': 'MyTestClass',
+            'nested': {
+                '_type': 'MyNestedClass',
+                'string_property': 'some string'
+            }
+        }
+
+        obj = MyTestClass()
+        obj.deserialize(body)
+
+        obj = MyTestClass.from_dict(body)
+
+        assert isinstance(obj, MyTestClass)
+        assert isinstance(obj.nested, MyNestedClass)
+        assert obj.nested.str_prop == 'some string'
