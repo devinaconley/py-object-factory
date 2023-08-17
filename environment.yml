@@ -9,7 +9,7 @@ dependencies:
   - ncurses
   - openssl
   - pip
-  - python>=3.6,<3.8
+  - python>=3.6,<3.11
   - readline
   - setuptools
   - sqlite
@@ -28,11 +28,11 @@ dependencies:
     - more-itertools
     - pluggy
     - py
-    - pytest~=5.4.3
+    - pytest~=7.4.0
     - pytest-cov~=2.10.0
     - requests
     - six
-    - sphinx~=3.4.0
+    - sphinx~=7.1.2
     - sphinx-rtd-theme
     - m2r2
     - urllib3
