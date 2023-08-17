@@ -52,7 +52,7 @@ class type: <class '__main__.Square'>, shape area: 2.25
 ```
 
 ### More examples
-See more advanced examples [here](examples)
+See more advanced examples [here](https://github.com/devinaconley/py-object-factory/tree/develop/examples)
 
 ## Install
 Use [pip](https://pip.pypa.io/en/stable/installing/) for installation

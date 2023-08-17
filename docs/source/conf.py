@@ -7,9 +7,9 @@ sys.path.insert( 0, os.path.abspath( '../../objectfactory/' ) )
 
 # project info
 project = 'objectfactory'
-copyright = '2018-2021, Devin A. Conley'
+copyright = '2018-2023, Devin A. Conley'
 author = 'Devin A. Conley'
-release = '0.1.0'
+release = '0.1.1'
 
 # config
 extensions = [

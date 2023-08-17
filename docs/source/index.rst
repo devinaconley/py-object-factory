@@ -7,7 +7,6 @@ objectfactory
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    quickstart
    objectfactory
