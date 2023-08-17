@@ -11,12 +11,12 @@ from objectfactory.factory import _global_factory
 from .testmodule.testclasses import MyBasicClass, MyComplexClass
 
 
-class TestFactory( object ):
+class TestFactory(object):
     """
     test case for serializable factory
     """
 
-    def test_register_class( self ):
+    def test_register_class(self):
         """
         validate register_class method
 
@@ -25,7 +25,7 @@ class TestFactory( object ):
         assert 'MyBasicClass' in _global_factory.registry
         assert 'test.testmodule.testclasses.MyBasicClass' in _global_factory.registry
 
-    def test_create_object( self ):
+    def test_create_object(self):
         """
         validate create object method
 
@@ -36,13 +36,13 @@ class TestFactory( object ):
             'str_prop': 'somestring',
             'int_prop': 42,
         }
-        obj = objectfactory.create( body )
+        obj = objectfactory.create(body)
 
-        assert isinstance( obj, MyBasicClass )
+        assert isinstance(obj, MyBasicClass)
         assert obj.str_prop == 'somestring'
         assert obj.int_prop == 42
 
-    def test_create_object_short_type( self ):
+    def test_create_object_short_type(self):
         """
         validate create object method without fully qualified path
 
@@ -53,13 +53,13 @@ class TestFactory( object ):
             'str_prop': 'somestring',
             'int_prop': 42,
         }
-        obj = objectfactory.create( body )
+        obj = objectfactory.create(body)
 
-        assert isinstance( obj, MyBasicClass )
+        assert isinstance(obj, MyBasicClass)
         assert obj.str_prop == 'somestring'
         assert obj.int_prop == 42
 
-    def test_create_object_other_full_path( self ):
+    def test_create_object_other_full_path(self):
         """
         validate create object method when full path is altered
 
@@ -70,13 +70,13 @@ class TestFactory( object ):
             'str_prop': 'somestring',
             'int_prop': 42,
         }
-        obj = objectfactory.create( body )
+        obj = objectfactory.create(body)
 
-        assert isinstance( obj, MyBasicClass )
+        assert isinstance(obj, MyBasicClass)
         assert obj.str_prop == 'somestring'
         assert obj.int_prop == 42
 
-    def test_create_object_unregistered( self ):
+    def test_create_object_unregistered(self):
         """
         validate create object method throws when unregistered
 
@@ -87,10 +87,10 @@ class TestFactory( object ):
             'str_prop': 'somestring',
             'int_prop': 42,
         }
-        with pytest.raises( ValueError, match=r'.*type MyClassThatDoesNotExist not found.*' ):
-            _ = objectfactory.create( body )
+        with pytest.raises(ValueError, match=r'.*type MyClassThatDoesNotExist not found.*'):
+            _ = objectfactory.create(body)
 
-    def test_create_object_typed( self ):
+    def test_create_object_typed(self):
         """
         validate create object method when enforcing type
 
@@ -101,13 +101,13 @@ class TestFactory( object ):
             'str_prop': 'somestring',
             'int_prop': 42,
         }
-        obj = objectfactory.create( body, object_type=MyBasicClass )
+        obj = objectfactory.create(body, object_type=MyBasicClass)
 
-        assert isinstance( obj, MyBasicClass )
+        assert isinstance(obj, MyBasicClass)
         assert obj.str_prop == 'somestring'
         assert obj.int_prop == 42
 
-    def test_create_object_typed_invalid( self ):
+    def test_create_object_typed_invalid(self):
         """
         validate create object method throws when type mismatch
 
@@ -122,4 +122,4 @@ class TestFactory( object ):
                 TypeError,
                 match=r'.*Object type MyBasicClass is not a MyComplexClass.*'
         ):
-            _ = objectfactory.create( body, object_type=MyComplexClass )
+            _ = objectfactory.create(body, object_type=MyComplexClass)

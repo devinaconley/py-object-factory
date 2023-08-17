@@ -10,19 +10,19 @@ from typing import Type, TypeVar
 from .serializable import Serializable
 
 # type var for hinting from generic function
-T = TypeVar( 'T', bound=Serializable )
+T = TypeVar('T', bound=Serializable)
 
 
-class Factory( object ):
+class Factory(object):
     """
     factory class for registering and creating serializable objects
     """
 
-    def __init__( self, name ):
+    def __init__(self, name):
         self.name = name
         self.registry = {}
 
-    def register( self, serializable: Serializable ):
+    def register(self, serializable: Serializable):
         """
         decorator to register class with factory
 
@@ -33,7 +33,7 @@ class Factory( object ):
         self.registry[serializable.__name__] = serializable
         return serializable
 
-    def create( self, body: dict, object_type: Type[T] = Serializable ) -> T:
+    def create(self, body: dict, object_type: Type[T] = Serializable) -> T:
         """
         create object from dictionary
 
@@ -49,31 +49,31 @@ class Factory( object ):
             pass
         if obj is None:
             try:
-                obj = self.registry[body['_type'].split( '.' )[-1]]()
+                obj = self.registry[body['_type'].split('.')[-1]]()
             except KeyError:
                 pass
         if obj is None:
             raise ValueError(
-                'Object type {} not found in factory registry'.format( body['_type'] )
+                'Object type {} not found in factory registry'.format(body['_type'])
             )
 
-        if not isinstance( obj, object_type ):
+        if not isinstance(obj, object_type):
             raise TypeError(
                 'Object type {} is not a {}'.format(
-                    type( obj ).__name__,
+                    type(obj).__name__,
                     object_type.__name__
                 )
             )
 
-        obj.deserialize( body )
+        obj.deserialize(body)
         return obj
 
 
 # global registry
-_global_factory = Factory( 'global' )
+_global_factory = Factory('global')
 
 
-def create( body: dict, object_type: Type[T] = Serializable ) -> T:
+def create(body: dict, object_type: Type[T] = Serializable) -> T:
     """
     create object from dictionary with the global factory
 
@@ -82,14 +82,14 @@ def create( body: dict, object_type: Type[T] = Serializable ) -> T:
     :raises TypeError: if the object is not an instance of the specified type
     :return: deserialized object of specified type
     """
-    return _global_factory.create( body, object_type=object_type )
+    return _global_factory.create(body, object_type=object_type)
 
 
-def register( serializable: Serializable ):
+def register(serializable: Serializable):
     """
     decorator to register class with the global factory
 
     :param serializable: serializable object class
     :return: registered class
     """
-    return _global_factory.register( serializable )
+    return _global_factory.register(serializable)

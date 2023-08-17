@@ -12,7 +12,7 @@ import marshmallow
 from .base import FieldABC, SerializableABC
 
 
-class Meta( ABCMeta ):
+class Meta(ABCMeta):
     """
     metaclass for serializable classes
 
@@ -20,7 +20,7 @@ class Meta( ABCMeta ):
     defining a new serializable class
     """
 
-    def __new__( mcs, name, bases, attributes, schema=None ):
+    def __new__(mcs, name, bases, attributes, schema=None):
         """
         define a new serializable object class, collect and register all field descriptors,
         construct marshmallow schema
@@ -31,16 +31,16 @@ class Meta( ABCMeta ):
         :param schema: (optional) predefined marshmallow schema
         :return: newly defined class
         """
-        obj = ABCMeta.__new__( mcs, name, bases, attributes )
+        obj = ABCMeta.__new__(mcs, name, bases, attributes)
 
         # init and collect serializable fields of parents
         fields = {}
         for base in bases:
-            fields.update( getattr( base, '_fields', {} ) )
+            fields.update(getattr(base, '_fields', {}))
 
         # populate with all serializable class descriptors
         for attr_name, attr in attributes.items():
-            if isinstance( attr, FieldABC ):
+            if isinstance(attr, FieldABC):
                 if attr._key is None:
                     attr._key = attr_name
                 attr._attr_key = '_' + attr_name  # define key that descriptor will use to access data
@@ -54,16 +54,16 @@ class Meta( ABCMeta ):
             }
             schema = marshmallow.Schema.from_dict(
                 marsh_fields,
-                name='_{}Schema'.format( name )
+                name='_{}Schema'.format(name)
             )
 
         # set fields and schema
-        setattr( obj, '_fields', fields )
-        setattr( obj, '_schema', schema )
+        setattr(obj, '_fields', fields)
+        setattr(obj, '_schema', schema)
         return obj
 
 
-class Serializable( SerializableABC, metaclass=Meta, schema=None ):
+class Serializable(SerializableABC, metaclass=Meta, schema=None):
     """
     base class for serializable objects
     """
@@ -71,7 +71,7 @@ class Serializable( SerializableABC, metaclass=Meta, schema=None ):
     _schema = None
 
     @classmethod
-    def from_kwargs( cls, **kwargs ):
+    def from_kwargs(cls, **kwargs):
         """
         constructor to set field data by keyword args
 
@@ -81,12 +81,12 @@ class Serializable( SerializableABC, metaclass=Meta, schema=None ):
         obj = cls()
         for key, val in kwargs.items():
             if key in obj._fields:
-                obj._fields[key].__set__( obj, val )
+                obj._fields[key].__set__(obj, val)
 
         return obj
 
     @classmethod
-    def from_dict( cls, body: dict ):
+    def from_dict(cls, body: dict):
         """
         constructor to set data with dictionary
 
@@ -94,17 +94,17 @@ class Serializable( SerializableABC, metaclass=Meta, schema=None ):
         :return: new instance of serializable object
         """
         obj = cls()
-        obj.deserialize( body )
+        obj.deserialize(body)
 
         return obj
 
-    def serialize( self, include_type: bool = True, use_full_type: bool = True ) -> dict:
+    def serialize(self, include_type: bool = True, use_full_type: bool = True) -> dict:
         self._serialize_kwargs = {
             'include_type': include_type,
             'use_full_type': use_full_type
         }
 
-        body = self._schema().dump( self )
+        body = self._schema().dump(self)
         if include_type:
             if use_full_type:
                 body['_type'] = self.__class__.__module__ + '.' + self.__class__.__name__
@@ -112,11 +112,11 @@ class Serializable( SerializableABC, metaclass=Meta, schema=None ):
                 body['_type'] = self.__class__.__name__
         return body
 
-    def deserialize( self, body: dict ):
-        data = self._schema().load( body, unknown=marshmallow.EXCLUDE )
+    def deserialize(self, body: dict):
+        data = self._schema().load(body, unknown=marshmallow.EXCLUDE)
         for name, attr in self._fields.items():
             if attr._key not in body:
                 continue
             if name not in data:
                 continue
-            setattr( self, name, data[name] )
+            setattr(self, name, data[name])

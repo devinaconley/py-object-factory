@@ -19,18 +19,18 @@ Simple **shapes** example:
 import objectfactory
 
 @objectfactory.register
-class Square( objectfactory.Serializable ):
+class Square(objectfactory.Serializable):
     side = objectfactory.Field()
 
-    def get_area( self ):
+    def get_area(self):
         return self.side * self.side
 
 @objectfactory.register
-class Triangle( objectfactory.Serializable ):
+class Triangle(objectfactory.Serializable):
     base = objectfactory.Field()
     height = objectfactory.Field()
 
-    def get_area( self ):
+    def get_area(self):
         return 0.5 * self.base * self.height
 
 serialized_data = [
@@ -40,8 +40,8 @@ serialized_data = [
 ]
 
 for data in serialized_data:
-    shape = objectfactory.create( data )
-    print( 'class type: {}, shape area: {}'.format( type( shape ), shape.get_area() ) )
+    shape = objectfactory.create(data)
+    print('class type: {}, shape area: {}'.format(type(shape), shape.get_area()))
 ```
 
 Output:
@@ -52,7 +52,7 @@ class type: <class '__main__.Square'>, shape area: 2.25
 ```
 
 ### More examples
-See more advanced examples [here](examples)
+See more advanced examples [here](https://github.com/devinaconley/py-object-factory/tree/develop/examples)
 
 ## Install
 Use [pip](https://pip.pypa.io/en/stable/installing/) for installation

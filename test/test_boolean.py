@@ -10,12 +10,12 @@ import marshmallow
 from objectfactory import Serializable, Boolean
 
 
-class TestBoolean( object ):
+class TestBoolean(object):
     """
     test case for boolean field type
     """
 
-    def test_definition( self ):
+    def test_definition(self):
         """
         test definition of class with boolean field
 
@@ -23,30 +23,30 @@ class TestBoolean( object ):
         in schema creation
         """
 
-        class MyTestClass( Serializable ):
+        class MyTestClass(Serializable):
             bool_prop = Boolean()
 
-        assert isinstance( MyTestClass._fields, dict )
-        assert len( MyTestClass._fields ) == 1
+        assert isinstance(MyTestClass._fields, dict)
+        assert len(MyTestClass._fields) == 1
         assert 'bool_prop' in MyTestClass._fields
-        assert isinstance( MyTestClass._fields['bool_prop'], Boolean )
+        assert isinstance(MyTestClass._fields['bool_prop'], Boolean)
 
         schema = MyTestClass._schema
-        assert issubclass( schema, marshmallow.Schema )
-        assert len( schema._declared_fields ) == 1
+        assert issubclass(schema, marshmallow.Schema)
+        assert len(schema._declared_fields) == 1
         assert 'bool_prop' in schema._declared_fields
 
         prop = schema._declared_fields['bool_prop']
-        assert isinstance( prop, marshmallow.fields.Boolean )
+        assert isinstance(prop, marshmallow.fields.Boolean)
 
-    def test_serialize( self ):
+    def test_serialize(self):
         """
         test serialize
 
         expect boolean data to be dumped to json body
         """
 
-        class MyTestClass( Serializable ):
+        class MyTestClass(Serializable):
             bool_prop = Boolean()
 
         obj = MyTestClass()
@@ -57,14 +57,14 @@ class TestBoolean( object ):
         assert body['_type'] == 'test.test_boolean.MyTestClass'
         assert body['bool_prop'] == True
 
-    def test_deserialize( self ):
+    def test_deserialize(self):
         """
         test deserialization
 
         expect boolean data to be loaded into class
         """
 
-        class MyTestClass( Serializable ):
+        class MyTestClass(Serializable):
             bool_prop = Boolean()
 
         body = {
@@ -73,20 +73,20 @@ class TestBoolean( object ):
         }
 
         obj = MyTestClass()
-        obj.deserialize( body )
+        obj.deserialize(body)
 
-        assert isinstance( obj, MyTestClass )
-        assert type( obj.bool_prop ) == bool
+        assert isinstance(obj, MyTestClass)
+        assert type(obj.bool_prop) == bool
         assert obj.bool_prop == True
 
-    def test_deserialize_cast( self ):
+    def test_deserialize_cast(self):
         """
         test deserialization casting
 
         expect int data to be cast to boolean
         """
 
-        class MyTestClass( Serializable ):
+        class MyTestClass(Serializable):
             bool_prop = Boolean()
 
         body = {
@@ -95,10 +95,10 @@ class TestBoolean( object ):
         }
 
         obj = MyTestClass()
-        obj.deserialize( body )
+        obj.deserialize(body)
 
-        assert isinstance( obj, MyTestClass )
-        assert type( obj.bool_prop ) == bool
+        assert isinstance(obj, MyTestClass)
+        assert type(obj.bool_prop) == bool
         assert obj.bool_prop == True
 
         body = {
@@ -107,13 +107,13 @@ class TestBoolean( object ):
         }
 
         obj = MyTestClass()
-        obj.deserialize( body )
+        obj.deserialize(body)
 
-        assert isinstance( obj, MyTestClass )
-        assert type( obj.bool_prop ) == bool
+        assert isinstance(obj, MyTestClass)
+        assert type(obj.bool_prop) == bool
         assert obj.bool_prop == False
 
-    def test_deserialize_invalid_int( self ):
+    def test_deserialize_invalid_int(self):
         """
         test deserialization validation
 
@@ -121,7 +121,7 @@ class TestBoolean( object ):
         int not in [0, 1]
         """
 
-        class MyTestClass( Serializable ):
+        class MyTestClass(Serializable):
             bool_prop = Boolean()
 
         body = {
@@ -130,17 +130,17 @@ class TestBoolean( object ):
         }
 
         obj = MyTestClass()
-        with pytest.raises( marshmallow.ValidationError ):
-            obj.deserialize( body )
+        with pytest.raises(marshmallow.ValidationError):
+            obj.deserialize(body)
 
-    def test_deserialize_invalid_float( self ):
+    def test_deserialize_invalid_float(self):
         """
         test deserialization validation
 
         expect validation error to be raised on invalid boolean data from float
         """
 
-        class MyTestClass( Serializable ):
+        class MyTestClass(Serializable):
             bool_prop = Boolean()
 
         body = {
@@ -149,17 +149,17 @@ class TestBoolean( object ):
         }
 
         obj = MyTestClass()
-        with pytest.raises( marshmallow.ValidationError ):
-            obj.deserialize( body )
+        with pytest.raises(marshmallow.ValidationError):
+            obj.deserialize(body)
 
-    def test_deserialize_invalid_string( self ):
+    def test_deserialize_invalid_string(self):
         """
         test deserialization validation
 
         expect validation error to be raised on invalid boolean data from string
         """
 
-        class MyTestClass( Serializable ):
+        class MyTestClass(Serializable):
             bool_prop = Boolean()
 
         body = {
@@ -168,5 +168,5 @@ class TestBoolean( object ):
         }
 
         obj = MyTestClass()
-        with pytest.raises( marshmallow.ValidationError ):
-            obj.deserialize( body )
+        with pytest.raises(marshmallow.ValidationError):
+            obj.deserialize(body)
