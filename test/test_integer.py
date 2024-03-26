@@ -19,7 +19,7 @@ class TestInteger(object):
         """
         test definition of class with integer field
 
-        expect field to to be collected, registered, and included
+        expect field to be collected, registered, and included
         in schema creation
         """
 

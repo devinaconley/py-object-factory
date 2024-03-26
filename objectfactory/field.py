@@ -93,6 +93,38 @@ class Float(Field):
         )
 
 
+class DateTime(Field):
+    """
+    serializable field for datetime data
+    """
+
+    def __init__(
+            self,
+            default=None,
+            key=None,
+            date_format=None,
+            required=False,
+            allow_none=True
+    ):
+        """
+        :param default: default value for field if unset
+        :param key: dictionary key to use for field serialization
+        :param date_format: date format to use (defaults to iso)
+        :param required: whether this field is required to deserialize an object
+        :param allow_none: whether null should be considered a valid value
+        """
+        super().__init__(default=default, key=key, required=required, allow_none=allow_none)
+        self._date_format = date_format
+
+    def marshmallow(self):
+        return marshmallow.fields.DateTime(
+            data_key=self._key,
+            required=self._required,
+            allow_none=self._allow_none,
+            format=self._date_format
+        )
+
+
 class Nested(Field):
     """
     field type for nested serializable object

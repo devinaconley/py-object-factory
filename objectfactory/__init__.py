@@ -6,6 +6,6 @@ for object creation, serialization, and polymorphism
 # do imports
 from .serializable import Serializable
 from .factory import Factory, register, create
-from .field import Field, Nested, List, Integer, String, Boolean, Float
+from .field import Field, Nested, List, Integer, String, Boolean, Float, DateTime
 
 __version__ = '0.1.0'
