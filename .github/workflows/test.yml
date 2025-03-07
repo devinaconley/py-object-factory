@@ -24,7 +24,7 @@ jobs:
 
       - name: pytest
         shell: bash -l {0}
-        run: pytest -v --cov --cov-report term:skip-covered
+        run: pytest -v --cov --cov-report term --cov-report xml
 
       - name: upload coverage report
         env:
