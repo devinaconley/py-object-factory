@@ -1,6 +1,6 @@
 # py-object-factory
 
-[![Build Status](https://app.travis-ci.com/devinaconley/py-object-factory.svg?branch=develop)](https://app.travis-ci.com/devinaconley/py-object-factory)
+[![Build Status](https://github.com/devinaconley/py-object-factory/actions/workflows/test.yml/badge.svg)](https://github.com/devinaconley/py-object-factory/actions/workflows/test.yml)
 [![codecov](https://codecov.io/gh/devinaconley/py-object-factory/branch/develop/graph/badge.svg)](https://codecov.io/gh/devinaconley/py-object-factory)
 [![Documentation Status](https://readthedocs.org/projects/objectfactory/badge/?version=latest)](https://objectfactory.readthedocs.io/en/latest/?badge=latest)
 

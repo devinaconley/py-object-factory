@@ -1,0 +1,32 @@
+name: test
+
+on:
+  push:
+  pull_request:
+  workflow_call:
+
+jobs:
+
+  test:
+    name: run objectfactory unit tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: check out git repository
+        uses: actions/checkout@v4
+
+      - name: setup conda env
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: py-object-factory
+          environment-file: environment.yml
+          auto-activate-base: false
+
+      - name: pytest
+        shell: bash -l {0}
+        run: pytest -v --cov --cov-report term --cov-report xml
+
+      - name: upload coverage report
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        uses: codecov/codecov-action@v2
