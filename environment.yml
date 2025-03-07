@@ -9,7 +9,7 @@ dependencies:
   - ncurses
   - openssl
   - pip
-  - python>=3.6,<3.11
+  - python>=3.6,<3.14
   - readline
   - setuptools
   - sqlite
@@ -21,7 +21,7 @@ dependencies:
     - atomicwrites
     - attrs
     - chardet
-    - codecov
+    - codecov~=2.1.13
     - coverage~=7.6.12
     - idna
     - marshmallow>=3,<4
