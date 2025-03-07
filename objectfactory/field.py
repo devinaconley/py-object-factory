@@ -34,7 +34,7 @@ class Field(FieldABC):
         setattr(instance, self._attr_key, value)
 
     def marshmallow(self):
-        return marshmallow.fields.Field(
+        return marshmallow.fields.Raw(
             data_key=self._key,
             required=self._required,
             allow_none=self._allow_none
@@ -99,12 +99,12 @@ class DateTime(Field):
     """
 
     def __init__(
-            self,
-            default=None,
-            key=None,
-            date_format=None,
-            required=False,
-            allow_none=True
+        self,
+        default=None,
+        key=None,
+        date_format=None,
+        required=False,
+        allow_none=True
     ):
         """
         :param default: default value for field if unset
@@ -125,18 +125,54 @@ class DateTime(Field):
         )
 
 
+class Enum(Field):
+    """
+    serializable field for enumerated data
+    """
+
+    def __init__(
+        self,
+        enum,
+        default=None,
+        key=None,
+        required=False,
+        allow_none=True,
+        by_value=False,
+    ):
+        """
+        :param enum: enum type for field validation
+        :param default: default value for field if unset
+        :param key: dictionary key to use for field serialization
+        :param required: whether this field is required to deserialize an object
+        :param allow_none: whether null should be considered a valid value
+        :param by_value: whether to serialize by value or by symbol
+        """
+        super().__init__(default=default, key=key, required=required, allow_none=allow_none)
+        self._enum = enum
+        self._by_value = by_value
+
+    def marshmallow(self):
+        return marshmallow.fields.Enum(
+            self._enum,
+            data_key=self._key,
+            required=self._required,
+            allow_none=self._allow_none,
+            by_value=self._by_value
+        )
+
+
 class Nested(Field):
     """
     field type for nested serializable object
     """
 
     def __init__(
-            self,
-            default=None,
-            key=None,
-            field_type=None,
-            required=False,
-            allow_none=True
+        self,
+        default=None,
+        key=None,
+        field_type=None,
+        required=False,
+        allow_none=True
     ):
         """
         :param default: default value for field if unset
@@ -163,12 +199,12 @@ class List(Field):
     """
 
     def __init__(
-            self,
-            default=None,
-            key=None,
-            field_type=None,
-            required=False,
-            allow_none=True
+        self,
+        default=None,
+        key=None,
+        field_type=None,
+        required=False,
+        allow_none=True
     ):
         """
         :param default: default value for field if unset
