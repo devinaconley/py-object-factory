@@ -24,4 +24,7 @@ jobs:
 
       - name: pytest
         shell: bash -l {0}
-        run: pytest -s -v ./test
+        run: pytest -v --cov --cov-report term:skip-covered
+
+      - name: upload coverage report
+        uses: codecov/codecov-action@v2
