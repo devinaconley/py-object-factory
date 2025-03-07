@@ -27,4 +27,6 @@ jobs:
         run: pytest -v --cov --cov-report term:skip-covered
 
       - name: upload coverage report
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         uses: codecov/codecov-action@v2
