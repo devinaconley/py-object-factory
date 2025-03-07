@@ -21,8 +21,8 @@ dependencies:
     - atomicwrites
     - attrs
     - chardet
-    - codecov~=2.1.7
-    - coverage~=5.2
+    - codecov
+    - coverage~=7.6.12
     - idna
     - marshmallow>=3,<4
     - more-itertools
