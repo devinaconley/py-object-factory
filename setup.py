@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='objectfactory',
-    version='0.2.0',
+    version='0.3.0b0',
     author='Devin A. Conley',
     author_email='devinaconley@gmail.com',
     description='objectfactory is a python package to easily implement the factory design pattern for object creation, serialization, and polymorphism',
@@ -20,5 +20,6 @@ setuptools.setup(
     ),
     install_requires=[
         'marshmallow>=3,<4',
+        'pydantic>=2,<3'
     ]
 )

@@ -3,57 +3,9 @@ module for testing functionality of serializable objects
 """
 
 # lib
-import marshmallow
 
 # src
-from objectfactory import Serializable, Field
-from .testmodule.testclasses import MyBasicClass, MySubclass
-
-
-class TestClassDefinition(object):
-    """
-    test group for definition of serializable object
-    """
-
-    def test_fields_collected(self):
-        """
-        test collection of field descriptors
-
-        expect each field defined in serializable class to be detected
-        and indexed under the _fields parameter
-        """
-
-        class MyClass(Serializable):
-            some_field = Field()
-            another_field = Field()
-            not_a_field = 'some class attribute'
-
-        assert isinstance(MyClass._fields, dict)
-        assert len(MyClass._fields) == 2
-        assert 'some_field' in MyClass._fields
-        assert isinstance(MyClass._fields['some_field'], Field)
-        assert 'another_field' in MyClass._fields
-        assert isinstance(MyClass._fields['another_field'], Field)
-        assert 'not_a_field' not in MyClass._fields
-
-    def test_schema_creation(self):
-        """
-        test creation of marshmallow schema
-
-        expect schema to contain each field defined in serializable class
-        """
-
-        class MyClass(Serializable):
-            some_field = Field()
-            another_field = Field()
-
-        schema = MyClass._schema
-        assert issubclass(schema, marshmallow.Schema)
-        assert len(schema._declared_fields) == 2
-        assert 'some_field' in schema._declared_fields
-        assert isinstance(schema._declared_fields['some_field'], marshmallow.fields.Field)
-        assert 'another_field' in schema._declared_fields
-        assert isinstance(schema._declared_fields['another_field'], marshmallow.fields.Field)
+from test.testmodule.testclasses import MyTestClass, MyTestSubclass
 
 
 class TestSerializableObject(object):
@@ -67,7 +19,7 @@ class TestSerializableObject(object):
 
         expect any fields to pass through as a keyword arg to init
         """
-        obj = MyBasicClass.from_kwargs(
+        obj = MyTestClass.from_kwargs(
             str_prop='some string',
             int_prop=12
         )
@@ -81,7 +33,7 @@ class TestSerializableObject(object):
 
         expect any dictionary data fields to pass through to init
         """
-        obj = MyBasicClass.from_dict(
+        obj = MyTestClass.from_dict(
             {
                 'str_prop': 'some string',
                 'int_prop': 12
@@ -101,12 +53,13 @@ class TestSerialization(object):
         """
         test serialization
         """
-        obj = MyBasicClass()
-        obj.str_prop = 'my awesome string'
-        obj.int_prop = 1234
+        obj = MyTestClass(
+            str_prop='my awesome string',
+            int_prop=1234
+        )
         body = obj.serialize()
 
-        assert body['_type'] == 'test.testmodule.testclasses.MyBasicClass'
+        assert body['_type'] == 'test.testmodule.testclasses.MyTestClass'
         assert body['str_prop'] == 'my awesome string'
         assert body['int_prop'] == 1234
 
@@ -115,15 +68,14 @@ class TestSerialization(object):
         test deserialization
         """
         body = {
-            '_type': 'MyBasicClass',
+            '_type': 'MyTestClass',
             'str_prop': 'another great string',
             'int_prop': 9001
         }
 
-        obj = MyBasicClass()
-        obj.deserialize(body)
+        obj = MyTestClass.from_dict(body)
 
-        assert isinstance(obj, MyBasicClass)
+        assert isinstance(obj, MyTestClass)
         assert obj.str_prop == 'another great string'
         assert obj.int_prop == 9001
 
@@ -143,16 +95,14 @@ class TestSerialization(object):
             'str_prop': 'string2',
             'int_prop': 9002
         }
-        obj1 = MyBasicClass()
-        obj1.deserialize(body1)
-        obj2 = MyBasicClass()
-        obj2.deserialize(body2)
+        obj1 = MyTestClass.from_dict(body1)
+        obj2 = MyTestClass.from_dict(body2)
 
-        assert isinstance(obj1, MyBasicClass)
+        assert isinstance(obj1, MyTestClass)
         assert obj1.str_prop == 'string1'
         assert obj1.int_prop == 9001
 
-        assert isinstance(obj2, MyBasicClass)
+        assert isinstance(obj2, MyTestClass)
         assert obj2.str_prop == 'string2'
         assert obj2.int_prop == 9002
 
@@ -162,12 +112,13 @@ class TestSerialization(object):
 
         expect short name to be set as value in type field
         """
-        obj = MyBasicClass()
-        obj.str_prop = 'my awesome string'
-        obj.int_prop = 1234
+        obj = MyTestClass(
+            str_prop='my awesome string',
+            int_prop=1234
+        )
         body = obj.serialize(use_full_type=False)
 
-        assert body['_type'] == 'MyBasicClass'
+        assert body['_type'] == 'MyTestClass'
         assert body['str_prop'] == 'my awesome string'
         assert body['int_prop'] == 1234
 
@@ -177,9 +128,10 @@ class TestSerialization(object):
 
         expect _type key to be excluded
         """
-        obj = MyBasicClass()
-        obj.str_prop = 'my awesome string'
-        obj.int_prop = 1234
+        obj = MyTestClass(
+            str_prop='my awesome string',
+            int_prop=1234
+        )
         body = obj.serialize(include_type=False)
 
         assert '_type' not in body
@@ -196,17 +148,18 @@ class TestSubClass(object):
         """
         test serialization
 
-        expect members of both parent and sub-class to be serialized, _type string
+        expect members of both parent and subclass to be serialized, _type string
         should be MySubClass, and override should not cause conflict
         """
-        obj = MySubclass()
-        obj.str_prop = 'parent_class_string'
-        obj.int_prop = 99
-        obj.str_prop_sub = 'sub_class_string'
+        obj = MyTestSubclass(
+            str_prop='parent_class_string',
+            int_prop=99,
+            str_prop_sub='sub_class_string'
+        )
 
         body = obj.serialize()
 
-        assert body['_type'] == 'test.testmodule.testclasses.MySubclass'
+        assert body['_type'] == 'test.testmodule.testclasses.MyTestSubclass'
         assert body['str_prop'] == 'parent_class_string'
         assert body['int_prop'] == 99
         assert body['str_prop_sub'] == 'sub_class_string'
@@ -225,10 +178,9 @@ class TestSubClass(object):
             'str_prop_sub': 'sub_class_string'
         }
 
-        obj = MySubclass()
-        obj.deserialize(body)
+        obj = MyTestSubclass.from_dict(body)
 
-        assert isinstance(obj, MySubclass)
+        assert isinstance(obj, MyTestSubclass)
         assert obj.str_prop == 'parent_class_string'
         assert obj.int_prop == 99
         assert obj.str_prop_sub == 'sub_class_string'

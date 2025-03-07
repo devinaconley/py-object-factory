@@ -3,7 +3,7 @@ module to implement various dummy classes for use during testing
 """
 
 # src
-from objectfactory import register, Serializable, Field, Nested, List
+from objectfactory import register, Serializable, Field, Nested, List, Object
 
 
 @register
@@ -16,9 +16,9 @@ class MyBasicClass(Serializable):
 
 
 @register
-class MySubClass(MyBasicClass):
+class MySubclass(MyBasicClass):
     """
-    sub class to be used for testing inheritance and serialization
+    subclass to be used for testing inheritance and serialization
     """
     int_prop = Field()
     str_prop_sub = Field()
@@ -31,3 +31,14 @@ class MyComplexClass(Serializable):
     """
     nested = Nested(MyBasicClass)
     prop = Field()
+
+
+@register
+class MyTestClass(Object):
+    str_prop: str
+    int_prop: int
+
+
+class MyTestSubclass(MyTestClass):
+    str_prop_sub: str
+    int_prop: int

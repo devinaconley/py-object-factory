@@ -7,6 +7,7 @@ implements base class and metaclass for serializable objects
 # lib
 from abc import ABCMeta
 import marshmallow
+from pydantic import BaseModel
 
 # src
 from .base import FieldABC, SerializableABC
@@ -102,6 +103,7 @@ class Serializable(SerializableABC, metaclass=Meta, schema=None):
         self._serialize_kwargs = {
             'include_type': include_type,
             'use_full_type': use_full_type
+            # todo type_key override
         }
 
         body = self._schema().dump(self)
@@ -120,3 +122,32 @@ class Serializable(SerializableABC, metaclass=Meta, schema=None):
             if name not in data:
                 continue
             setattr(self, name, data[name])
+
+
+# todo split into marshmallow vs pydantic modules
+
+class Object(BaseModel, SerializableABC):
+    def __init__(self, **data):
+        super().__init__(**data)
+
+    @classmethod
+    def from_kwargs(cls, **kwargs):
+        # todo maybe consolidate with init
+        return cls(**kwargs)
+
+    @classmethod
+    def from_dict(cls, body: dict):
+        return cls(**body)
+
+    def serialize(self, include_type: bool = True, use_full_type: bool = True) -> dict:
+        body = self.model_dump(mode='json')
+        if include_type:
+            if use_full_type:
+                body['_type'] = self.__class__.__module__ + '.' + self.__class__.__name__
+            else:
+                body['_type'] = self.__class__.__name__
+        return body
+
+    def deserialize(self, body: dict):
+        # todo maybe consolidate with from_dict
+        raise NotImplementedError

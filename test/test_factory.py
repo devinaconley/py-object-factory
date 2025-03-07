@@ -8,7 +8,7 @@ import pytest
 # src
 import objectfactory
 from objectfactory.factory import _global_factory
-from .testmodule.testclasses import MyBasicClass, MyComplexClass
+from .testmodule.testclasses import MyBasicClass, MyComplexClass, MyTestClass
 
 
 class TestFactory(object):
@@ -119,7 +119,21 @@ class TestFactory(object):
             'int_prop': 42,
         }
         with pytest.raises(
-                TypeError,
-                match=r'.*Object type MyBasicClass is not a MyComplexClass.*'
+            TypeError,
+            match=r'.*Object type MyBasicClass is not a MyComplexClass.*'
         ):
             _ = objectfactory.create(body, object_type=MyComplexClass)
+
+    def test_create_object_pydantic(self):
+        """
+        validate create pydantic object
+        """
+        body = {
+            '_type': 'test.testmodule.testclasses.MyTestClass',
+            'str_prop': 'somestring',
+            'int_prop': 42,
+        }
+        obj = objectfactory.create(body)
+        assert isinstance(obj, MyTestClass)
+        assert obj.str_prop == 'somestring'
+        assert obj.int_prop == 42

@@ -67,3 +67,25 @@ class SerializableABC(ABC):
         :param body: serialized data to load into object
         """
         pass
+
+    @classmethod
+    @abstractmethod
+    def from_kwargs(cls, **kwargs):
+        """
+        constructor to set field data by keyword args
+
+        :param kwargs: keyword arguments by field
+        :return: new instance of serializable object
+        """
+        pass
+
+    @classmethod
+    @abstractmethod
+    def from_dict(cls, body: dict):
+        """
+        constructor to set data with dictionary
+
+        :param body: dictionary
+        :return: new instance of serializable object
+        """
+        pass

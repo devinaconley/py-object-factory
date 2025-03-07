@@ -4,7 +4,7 @@ for object creation, serialization, and polymorphism
 """
 
 # do imports
-from .serializable import Serializable
+from .serializable import Serializable, Object
 from .factory import Factory, register, create
 from .field import Field, Nested, List, Integer, String, Boolean, Float, DateTime, Enum
 
